@@ -1,3 +1,5 @@
 * text=auto eol=lf
 *.zip binary
 *.woff2 binary
+# Preserve verbatim upstream license formatting.
+source/docs/portable-third-party-notices.txt -whitespace
