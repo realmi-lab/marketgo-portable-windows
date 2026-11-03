@@ -1,7 +1,7 @@
 name: Portable source and package QA
 on:
   push:
-    branches: [main, codex/unified-portable-qa]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read

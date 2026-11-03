@@ -770,7 +770,7 @@
     "scripts/Start-MarketGO.command": "54453536067d80eaaf8045822aba2b3e29c81d9b845711cc075277a65e3aff97",
     "scripts/build-portable-all.sh": "1781cc45a5bdb36b25ac9f0b228674f3048f994648194d8b9081e5fe866e8441",
     "scripts/build-portable-macos.sh": "57fe0f44d1741662be4f7519b162431a1b86c3f2ed28b6275569a2cdbc67abfb",
-    "scripts/build-portable-universal.py": "f3ea5ba87da56077a9f7d76ec8467dc5984d7a3527276f392925ec9095839586",
+    "scripts/build-portable-universal.py": "a778f2c9a842c18d7643376a09b90d06c9671b7ed32482d6b04e80459860937c",
     "scripts/build-portable-windows.sh": "ae8013b00be9b638831734e1a0835247b6fc17aefede9ea1f24c35fb62eae0b6",
     "scripts/portable-python/adapters.py": "6a93c04248a9922d98acccd45fe4196c7c1880b1dd23eb5ef22d2f5f4bec162d",
     "scripts/portable-python/build_package.py": "ad0ad9634a920b00e6f0621a41e3a14fb470abf0a50ee1e07b77f5df5841c100",
@@ -819,6 +819,7 @@
     "services/collector/stream/trade_orderbook_collection.go": "7c43de30cfb3f207ea7d314d932c1686b8fdfecb769546730221d90fc7ab5f8f",
     "tests/portable_python/requirements.txt": "adbc62317647fa5420fd78536a731d0c5f17949f07a675f63c91010328932c5f",
     "tests/portable_python/test_clock.py": "95657550e7eb816fb0e3d4db604fc969f458e823c2a224def401cabfed8349a5",
-    "tests/portable_python/test_portable.py": "ddbd991866f509c06ff48a53ba9e67156f3204eb5ea8296337d5f5d89c0ad8d3"
+    "tests/portable_python/test_portable.py": "ddbd991866f509c06ff48a53ba9e67156f3204eb5ea8296337d5f5d89c0ad8d3",
+    "docs/portable-third-party-notices.txt": "25826258045659205d19d0bf0c447f8d59f74de6698dda090ae000b1c5548390"
   }
 }

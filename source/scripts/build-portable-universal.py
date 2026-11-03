@@ -21,6 +21,7 @@ def main():
     output.mkdir(parents=True, exist_ok=True)
     target = output / 'MarketGO-Portable.zip'
     readme = (ROOT / 'docs' / 'portable-all-platforms.md').read_text(encoding='utf-8')
+    notices = (ROOT / 'docs' / 'portable-third-party-notices.txt').read_bytes()
     expected, sources = {}, {}
     with zipfile.ZipFile(target, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as combined:
         root_info = zipfile.ZipInfo('MarketGO/README-KO.txt')
@@ -28,6 +29,7 @@ def main():
         root_info.external_attr = (stat.S_IFREG | 0o644) << 16
         root_info.compress_type = zipfile.ZIP_DEFLATED
         combined.writestr(root_info, readme.encode('utf-8-sig'))
+        combined.writestr('MarketGO/THIRD-PARTY-NOTICES.txt', notices)
         for platform, name in PLATFORMS.items():
             source = args.source / name
             sources[platform] = hashlib.sha256(source.read_bytes()).hexdigest()
@@ -56,7 +58,7 @@ def main():
         if result.testzip():
             raise ValueError('Combined ZIP failed integrity check')
         actual_files = {i.filename for i in result.infolist() if not i.is_dir()}
-        assert actual_files == set(expected) | {'MarketGO/README-KO.txt'}
+        assert actual_files == set(expected) | {'MarketGO/README-KO.txt', 'MarketGO/THIRD-PARTY-NOTICES.txt'}
         for name, digest in expected.items():
             assert hashlib.sha256(result.read(name)).hexdigest() == digest, name
         for platform in ('Mac-AppleSilicon',):
@@ -65,6 +67,7 @@ def main():
                 assert (info.external_attr >> 16) & stat.S_IXUSR, info.filename
         assert result.read('MarketGO/Windows/start.bat').startswith(b'@echo off\r\n')
         assert result.read('MarketGO/README-KO.txt').decode('utf-8-sig') == readme
+        assert result.read('MarketGO/THIRD-PARTY-NOTICES.txt') == notices
     receipt = {'archive': target.name, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest(),
                'sources': sources, 'verified_runtime_files': len(expected)}
     (output / 'verification.json').write_text(json.dumps(receipt, indent=2) + '\n')
