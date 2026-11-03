@@ -1,6 +1,8 @@
 MarketGO Portable third-party license notices
 
-Windows Python and wheel licenses are also retained in Windows/runtime and Windows/vendor.
+Python and wheel licenses are retained in each platform's runtime/ and vendor/ folders.
+macOS CPython is packaged from Astral python-build-standalone (20261026):
+https://github.com/astral-sh/python-build-standalone/releases/tag/20261026
 These notices apply to third-party dependencies; they do not assign a license to MarketGO source.
 
 ========================================================================

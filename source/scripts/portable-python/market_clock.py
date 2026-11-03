@@ -109,7 +109,7 @@ class MarketClock:
         cluster = max(clusters, key=len, default=[])
         if len({name for _, name in cluster}) < 2:
             with self._lock:
-                self._error = 'No agreement from two HTTPS clocks. Check Windows time synchronization and restart. ' + '; '.join(errors)[:300]
+                self._error = 'No agreement from two HTTPS clocks. Check PC time synchronization and restart. ' + '; '.join(errors)[:300]
             LOG.warning('Clock reference unavailable: %s', self._error)
             return False
         with self._lock:

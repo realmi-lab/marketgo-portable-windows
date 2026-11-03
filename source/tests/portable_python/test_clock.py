@@ -54,7 +54,7 @@ class ClockTests(unittest.TestCase):
             raise ssl.SSLCertVerificationError('injected certificate failure')
         self.assertFalse(clock.synchronize(None,fetch))
         self.assertEqual(clock.info()['mode'],'local')
-        self.assertIn('Windows time',clock.info()['error'])
+        self.assertIn('time synchronization',clock.info()['error'])
         self.assertEqual(clock.time(),UTC+600)
 
     def test_disagreeing_https_clocks_do_not_form_a_false_reference(self):

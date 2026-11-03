@@ -368,10 +368,7 @@ export async function getIndexDay(
     { signal, headers: { Accept: "application/json" } }
   );
   if (!response.ok && (import.meta.env?.VITE_PORTABLE_PYTHON === "true" || import.meta.env?.VITE_PORTABLE_POWERSHELL === "true")) {
-    const failure = await response.json().catch(() => ({}));
-    throw new Error(String(failure.detail ?? "").includes("archived hourly")
-      ? "이 포터블 버전은 과거 시간봉을 보관하지 않습니다. 오늘 날짜를 선택해 주세요."
-      : "로컬 수집 자료를 불러오지 못했습니다. 실행 창과 logs/runtime.log를 확인해 주세요.");
+    throw new Error("로컬 수집 자료를 불러오지 못했습니다. 실행 창과 logs/runtime.log를 확인해 주세요.");
   }
   if (!response.ok)
     throw new Error(

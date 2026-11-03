@@ -136,6 +136,7 @@ export default function MarketIndex2({ showVisual = true, showStatus = true, sho
   useIndexRefresh(setFilterRetry);
   useFollowKSTToday(day, setDay, referenceNowMS === undefined ? undefined : currentKSTDay(referenceNowMS));
   const [view, setView] = useState<"coins" | "exchanges">("coins");
+  const [hourlyView, setHourlyView] = useState(false);
   const liveMode = realtimeWindow !== undefined && view === "exchanges";
   const live = usePolled(liveMode ? `realtime-index:${realtimeWindow}:${refreshVersion}` : null, signal => getRealtimeIndex(realtimeWindow ?? 10, signal), 1000);
   useEffect(() => { onLoadingChange?.(liveMode ? live.loading : loading); }, [liveMode, live.loading, loading, onLoadingChange]);
@@ -163,7 +164,7 @@ export default function MarketIndex2({ showVisual = true, showStatus = true, sho
     setLoading(true);
     setError("");
     const timeout = window.setTimeout(() => controller.abort("timeout"), 12_000);
-    getIndexDay(day, controller.signal, undefined, isToday ? realtimeWindow !== undefined ? "ticker_24h" : "hourly_rolling" : undefined)
+    getIndexDay(day, controller.signal, undefined, isToday ? realtimeWindow !== undefined && !hourlyView ? "ticker_24h" : "hourly_rolling" : undefined)
       .then(value => {
         if (active) {
           setData(value);
@@ -189,7 +190,7 @@ export default function MarketIndex2({ showVisual = true, showStatus = true, sho
       window.clearTimeout(timeout);
       controller.abort();
     };
-  }, [day, retry, isToday, refreshVersion, liveMode, realtimeWindow]);
+  }, [day, retry, isToday, refreshVersion, liveMode, realtimeWindow, hourlyView]);
 
   useIndexRefresh(setRetry, indexRefreshInterval(data?.day === day ? data : null));
 
@@ -333,6 +334,7 @@ export default function MarketIndex2({ showVisual = true, showStatus = true, sho
             </label>
           </div>
           {filters.controls}
+          {import.meta.env.VITE_PORTABLE_PYTHON === "true" && <div className="index2-source-control"><label htmlFor="portable-index-source">자료</label><select id="portable-index-source" aria-label="인덱스 자료 기준" disabled={liveMode || !isToday} value={!isToday || hourlyView ? "hourly" : "ticker"} onChange={event => setHourlyView(event.target.value === "hourly")}><option value="ticker">최근 24시간 티커</option><option value="hourly">수집한 시간봉</option></select>{!liveMode && current?.storage_mode !== "TICKER_24H" && current?.status === "PARTIAL" && <span role="status" title="저장한 시간봉만 합산한 값입니다. 비어 있는 시간과 거래금액 미제공 거래소는 포함하지 않습니다.">일부 자료</span>}</div>}
           {liveMode && <div className="index2-live-status" role="status">{windowLabel(realtimeWindow ?? 10)} 실시간 · {formatMarketTimeMS((filters.liveAsOf ?? 0) * 1000, "time-seconds")}{live.error || filters.liveError ? " · 갱신 지연" : ""}</div>}
           {showTableIntro && <p className="index2-copy index2-detail-copy">
             {view === "coins"

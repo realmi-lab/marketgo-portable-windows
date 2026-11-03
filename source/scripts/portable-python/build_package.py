@@ -1,4 +1,5 @@
-"""Build an offline-startable Windows package with a hash-pinned official runtime."""
+"""Package identical app/web sources with pinned Windows or macOS Python."""
+import argparse
 from pathlib import Path
 import hashlib
 import json
@@ -6,11 +7,11 @@ import os
 import shutil
 import subprocess
 import tempfile
+import tarfile
 import zipfile
 
 ROOT = Path(__file__).resolve().parents[2]
 SOURCE = Path(__file__).resolve().parent
-OUTPUT = ROOT / 'dist' / 'windows-python-portable'
 CACHE = ROOT / '.tmp' / 'python-runtime'
 
 
@@ -40,34 +41,46 @@ def extract(archive, directory):
         z.extractall(directory)
 
 
-def main():
-    dependencies = json.loads((SOURCE / 'dependencies.json').read_text())
-    OUTPUT.mkdir(parents=True, exist_ok=True)
-    with tempfile.TemporaryDirectory(prefix='build-', dir=OUTPUT) as staging:
-        bundle = Path(staging) / 'MarketGO'
+def build(platform, web, dependencies):
+    output = ROOT / 'dist' / ('windows-python-portable' if platform == 'windows' else 'macos-python-portable')
+    output.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='build-', dir=output) as staging:
+        staging = Path(staging)
+        bundle = staging / 'MarketGO'
         bundle.mkdir()
-        environment = dict(os.environ, VITE_PORTABLE_DESKTOP='true', VITE_PORTABLE_POWERSHELL='false',
-                           VITE_PORTABLE_PYTHON='true', VITE_LLM_ENABLED='false', VITE_API_URL='')
-        subprocess.run(['pnpm', 'exec', 'vite', 'build', '--base', '/', '--outDir', str(bundle / 'web')],
-                       cwd=ROOT / 'frontend', env=environment, check=True, timeout=30)
-        extract(fetch(dependencies['python']), bundle / 'runtime')
+        shutil.copytree(web, bundle / 'web')
+        if platform == 'windows':
+            extract(fetch(dependencies['python']), bundle / 'runtime')
+            pth = next((bundle / 'runtime').glob('python*._pth'))
+            standard_zip = next((bundle / 'runtime').glob('python*.zip')).name
+            pth.write_text(f'{standard_zip}\n.\n../app\n../vendor\n', encoding='ascii')
+        else:
+            with tarfile.open(fetch(dependencies['python_macos_arm64'])) as archive:
+                archive.extractall(staging / 'unpacked', filter='data')
+            # Materialize aliases so the ZIP needs no symlink support.
+            shutil.copytree(staging / 'unpacked' / 'python', bundle / 'runtime', symlinks=False)
         for wheel in dependencies['wheels']:
             extract(fetch(wheel), bundle / 'vendor')
-        pth = next((bundle / 'runtime').glob('python*._pth'))
-        standard_zip = next((bundle / 'runtime').glob('python*.zip')).name
-        pth.write_text(f'{standard_zip}\n.\n../app\n../vendor\n', encoding='ascii')
         (bundle / 'app').mkdir()
-        for name in ('adapters.py', 'engine.py', 'collector.py', 'server.py', 'market_clock.py'):
+        for name in ('adapters.py', 'engine.py', 'collector.py', 'server.py', 'market_clock.py', 'hourly.py'):
             shutil.copy2(SOURCE / name, bundle / 'app' / name)
         shutil.copy2(SOURCE / 'dependencies.json', bundle / 'DEPENDENCIES.json')
-        shutil.copy2(ROOT / 'docs' / 'portable-windows.md', bundle / 'README-KO.md')
-        bat = (ROOT / 'scripts' / 'start-windows.bat').read_text()
-        (bundle / 'start.bat').write_bytes(bat.replace('\r\n', '\n').replace('\n', '\r\n').encode('ascii'))
-        for required in ('runtime/python.exe', 'runtime/_ssl.pyd', 'runtime/_socket.pyd', 'web/index.html',
-                         'vendor/websocket/__init__.py', 'vendor/certifi/cacert.pem'):
-            if not (bundle / required).is_file():
-                raise RuntimeError(f'Missing runtime dependency: {required}')
-        archive = OUTPUT / 'MarketGO-Windows-x64.zip'
+        if platform == 'windows':
+            shutil.copy2(ROOT / 'docs' / 'portable-windows.md', bundle / 'README-KO.md')
+            bat = (ROOT / 'scripts' / 'start-windows.bat').read_text()
+            (bundle / 'start.bat').write_bytes(bat.replace('\r\n', '\n').replace('\n', '\r\n').encode('ascii'))
+            required = ('runtime/python.exe', 'runtime/_ssl.pyd', 'runtime/_socket.pyd', 'runtime/_sqlite3.pyd')
+            name = 'MarketGO-Windows-x64.zip'
+        else:
+            shutil.copy2(ROOT / 'docs' / 'portable-macos.md', bundle / 'README-KO.md')
+            shutil.copy2(ROOT / 'scripts' / 'Start-MarketGO.command', bundle / 'Start-MarketGO.command')
+            (bundle / 'Start-MarketGO.command').chmod(0o755)
+            required = ('runtime/bin/python3',)
+            name = 'MarketGO-macOS-arm64.zip'
+        for required_file in (*required, 'web/index.html', 'vendor/websocket/__init__.py', 'vendor/certifi/cacert.pem', 'app/hourly.py'):
+            if not (bundle / required_file).is_file():
+                raise RuntimeError(f'Missing runtime dependency: {required_file}')
+        archive = output / name
         with zipfile.ZipFile(archive, 'w', zipfile.ZIP_DEFLATED, compresslevel=6) as z:
             for path in sorted(bundle.rglob('*')):
                 if path.is_symlink():
@@ -77,12 +90,29 @@ def main():
         with zipfile.ZipFile(archive) as z:
             if z.testzip():
                 raise RuntimeError('ZIP integrity verification failed')
-        final = OUTPUT / 'MarketGO'
+        final = output / 'MarketGO'
         if final.exists():
             shutil.rmtree(final)
         shutil.copytree(bundle, final)
-        (OUTPUT / (archive.name + '.sha256')).write_text(f'{digest(archive)}  {archive.name}\n')
+        (output / (archive.name + '.sha256')).write_text(f'{digest(archive)}  {archive.name}\n')
         print(f'ZIP: {archive} ({archive.stat().st_size:,} bytes)')
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--platform', choices=('windows', 'mac-arm64', 'all'), default='windows')
+    args = parser.parse_args()
+    dependencies = json.loads((SOURCE / 'dependencies.json').read_text())
+    output = ROOT / 'dist'
+    output.mkdir(parents=True, exist_ok=True)
+    with tempfile.TemporaryDirectory(prefix='shared-web-', dir=output) as staging:
+        web = Path(staging) / 'web'
+        environment = dict(os.environ, VITE_PORTABLE_DESKTOP='true', VITE_PORTABLE_POWERSHELL='false',
+                           VITE_PORTABLE_PYTHON='true', VITE_LLM_ENABLED='false', VITE_API_URL='')
+        subprocess.run(['pnpm', 'exec', 'vite', 'build', '--base', '/', '--outDir', str(web)],
+                       cwd=ROOT / 'frontend', env=environment, check=True, timeout=30)
+        for platform in ('windows', 'mac-arm64') if args.platform == 'all' else (args.platform,):
+            build(platform, web, dependencies)
 
 
 if __name__ == '__main__':

@@ -5,6 +5,12 @@
     "filename": "python-3.14.10-embed-amd64.zip",
     "sha256": "90905e64a840557d8c1bc4f5b74db3d7ee85e3ffb217611cac1c7813acea4159"
   },
+  "python_macos_arm64": {
+    "version": "3.14.10",
+    "url": "https://github.com/astral-sh/python-build-standalone/releases/download/20261026/cpython-3.14.10%2B20261026-aarch64-apple-darwin-install_only_stripped.tar.gz",
+    "filename": "cpython-3.14.10+20261026-aarch64-apple-darwin-install_only_stripped.tar.gz",
+    "sha256": "95eb8c87d16af37c54e9765e31d8c56c0d8ffa9968ea0f704f73a9b83f84e9f9"
+  },
   "wheels": [
     {
       "filename": "websocket_client-1.9.2-py3-none-any.whl",

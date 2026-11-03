@@ -1,14 +1,13 @@
 # MarketGO Portable 소스
 
-Windows Python 서버와 Apple Silicon Mac Go 서버, 공통 React 화면의 빌드 원본입니다.
-빌드에 필요한 Go 패키지와 임베드 리소스를 포함합니다. 운영 배포 설정, 인증값, 수집 기록은 포함하지 않습니다.
-공지·AI 관련 Go 코드 일부는 공통 서버의 컴파일 의존성으로 포함되지만 포터블 실행기에서는 해당 기능을 끕니다.
+Windows와 Apple Silicon Mac이 같은 Python 수집·계산·HTTP·시간봉 저장 코드와 같은 React 화면을 사용합니다.
+플랫폼별로 런타임과 실행기만 다릅니다. 예전 Go 소스는 참고용으로 보존하며 현재 패키지에는 사용하지 않습니다.
+운영 설정·인증값·사용자 수집 기록은 포함하지 않습니다.
 
-## 다시 빌드
+## 빌드
 
-Mac 또는 Linux에서 Go 1.26 이상, Node.js 26, pnpm 11.10.0, Python 3.10 이상,
-`curl`, `zip`을 준비합니다. 실행용 ZIP에는 개발 도구 설치가 필요하지 않습니다.
-이 README가 있는 `source/`를 기준으로 실행합니다.
+Node.js 26, pnpm 11.10.0, Python 3.12 이상, curl이 필요합니다. 사용자용 ZIP에는 개발 도구 설치가 필요하지 않습니다.
+이 폴더에서 실행합니다.
 
 ```sh
 cd frontend
@@ -17,57 +16,36 @@ cd ..
 sh scripts/build-portable-all.sh
 ```
 
-통합 ZIP: `dist/universal-portable/MarketGO-Portable.zip`.
-SHA256: 같은 폴더의 `MarketGO-Portable.zip.sha256`.
-통합 스크립트는 Windows와 Apple Silicon Mac만 생성합니다.
-서버를 실행하거나 기존 수집 프로그램을 종료하지 않습니다.
+통합 ZIP: `dist/universal-portable/MarketGO-Portable.zip`과 `.sha256`.
+빌드는 서버를 실행하지 않습니다. Windows·Mac의 app/와 web/ 파일이 다르면 통합 빌드가 실패합니다.
+런타임·라이브러리는 `scripts/portable-python/dependencies.json`의 SHA256으로 검사합니다.
+Windows는 Python.org 임베디드 CPython, Mac은 Astral python-build-standalone CPython이며 둘 다 3.14.10입니다.
 
-개별 빌드:
+개별 빌드는 `sh scripts/build-portable-windows.sh`, `sh scripts/build-portable-macos.sh arm64`입니다.
+출력은 각각 `dist/windows-python-portable/`, `dist/macos-python-portable/`입니다.
 
-```sh
-sh scripts/build-portable-windows.sh
-sh scripts/build-portable-macos.sh arm64
-```
-
-Windows 빌드는 `dist/windows-python-portable/`, Mac 빌드는 `dist/macos-native-portable/`에 생성합니다.
-Windows 런타임·라이브러리 다운로드는 `scripts/portable-python/dependencies.json`에 고정된 SHA256으로 검사합니다.
-다운로드 캐시는 `.tmp/python-runtime/`입니다. Windows용 ZIP은 Windows 기본 BAT로 실행하며 Python 설치가 필요하지 않습니다.
-Go 모듈은 `go.sum`, 화면 패키지는 `frontend/pnpm-lock.yaml`로 고정합니다.
-ZIP 생성 시각과 Go 빌드 환경에 따라 압축 파일·바이너리 해시는 달라질 수 있습니다.
-
-## 회귀 검사
-
-화면 타입과 포터블에 관련된 결정론적 검사:
-
-```sh
-cd frontend
-pnpm check
-pnpm test
-cd ..
-```
-
-Python 검사는 별도의 개발용 가상환경에 고정된 테스트 의존성을 설치해 실행합니다.
-다음 명령은 Mac/Linux 기준입니다.
+## 검증
 
 ```sh
 python3 -m venv .venv
 .venv/bin/python -m pip install --require-hashes -r ../requirements.txt
 PYTHONPATH=scripts/portable-python .venv/bin/python -m unittest discover -s tests/portable_python -v
+cd frontend
+pnpm check
+pnpm test
 ```
 
-17개 Python 검사는 중복 체결, 구간·코인별 분모, 누락과 0 구분, 재연결,
-보관 한도, HTTP 응답, PC 시각 오차·단조 시간 및 HTTPS 검증을 확인합니다.
-외부 거래소의 현재 장애나 모든 PC의 보안 정책을 검증하는 검사는 아닙니다.
+24개 Python 검사는 체결·구간 계산·중복·결측·시간 보정과 공식 시간봉 경계·재시작·영구 저장·자동 수집기 시작·HTTP를 검사합니다.
+실제 Windows의 이번 BAT 실행과 장시간 수집은 별도 검증이 필요합니다.
 
-## 코드 위치
+## 위치
 
-- `scripts/portable-python/`: Windows 수집·계산·HTTP 서버와 패키지 생성기
-- `scripts/start-windows.bat`: Windows 실행기
-- `scripts/Start-MarketGO.command`: Mac 실행기
-- `frontend/client/`: 두 플랫폼의 공통 화면. 빌드 플래그로 Python REST 또는 Go 연결을 선택합니다.
-- `cmd/market-share/`, `internal/`, `services/`, `contracts/`: Mac 서버와 필요한 Go 패키지
-- `docs/`: 플랫폼별 실행 안내
-- `SOURCE-MANIFEST.json`: 공개한 원본 파일의 SHA256 목록
+- `scripts/portable-python/`: 두 플랫폼이 함께 쓰는 프로그램과 패키지 생성기.
+- `scripts/start-windows.bat`, `scripts/Start-MarketGO.command`: 플랫폼 실행기.
+- `frontend/client/`: 공통 화면. 두 플랫폼 모두 VITE_PORTABLE_PYTHON=true.
+- `tests/portable_python/`: 공통 회귀 검사.
+- `docs/hourly-index.md`: 수집·저장·결측 계약.
+- `SOURCE-MANIFEST.json`: 이 파일 자체를 제외한 소스 SHA256 목록.
 
-서버의 저장 모드는 메모리입니다. 배포용 Apple 개발자 서명·공증은 하지 않았습니다.
-다른 서비스의 운영·DB 관리 도구와 전체 제품의 E2E 하네스는 이 포터블 소스 배포 범위에 포함하지 않습니다.
+실시간 체결은 메모리, 공식 시간봉은 실행 폴더의 data/index-hours.sqlite3에 저장합니다.
+과거 결측 백필·실패 재시도·공지·AI는 실행하지 않습니다. 사용자 data/는 Git과 배포 ZIP에서 제외합니다.

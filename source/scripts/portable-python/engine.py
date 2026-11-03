@@ -102,9 +102,11 @@ class Feed:
 
 
 class Engine:
-    def __init__(self, clock: Callable[[], float] = time.time, max_records: int = 250_000, clock_info=None):
+    def __init__(self, clock: Callable[[], float] = time.time, max_records: int = 250_000, clock_info=None, archive=None, clock_sync=None):
         self.clock = clock
         self.clock_info = clock_info
+        self.clock_sync = clock_sync
+        self.archive = archive
         self.lock = threading.RLock()
         self.stop = threading.Event()
         self.tickers = {v: Snapshot() for v in VENUES}
@@ -267,6 +269,58 @@ class Engine:
                         start=int(oldest) - 86400, end=int(oldest), status='PARTIAL' if partial else 'COMPLETE',
                         membership='CURRENT_KRW_MARKETS', usdt_close_krw=None, rows=rows, exchanges=[], domestic=domestic)
 
+    def index_day(self, query: dict) -> dict:
+        if query.get('source') == 'ticker_24h' or self.archive is None:
+            return self.ticker_index(query)
+        now = self.clock()
+        day = query.get('day', day_at(now))
+        try:
+            date = datetime.strptime(day, '%Y-%m-%d').replace(tzinfo=KST)
+        except ValueError as exc:
+            raise ValueError('day must use YYYY-MM-DD') from exc
+        if date.strftime('%Y-%m-%d') != day or day > day_at(now):
+            raise ValueError('Invalid or future index date')
+        if day == day_at(now):
+            end = int(now) // 3600 * 3600
+            start = end - 86400
+        else:
+            start, end = int(date.timestamp()), int((date + timedelta(days=1)).timestamp())
+        values = self.archive.snapshot(start, end)
+        by_market = {}
+        for value in values:
+            by_market.setdefault((value['venue'], value['base'], value['market']), []).append(value)
+        rows = []
+        for (venue, base, market), hours in sorted(by_market.items()):
+            valid = [h for h in hours if h['status'] == 'COMPLETE']
+            amount = sum((Decimal(h['amount']) for h in valid), ZERO) if valid else None
+            partial = len(valid) < 24
+            item = row(venue, base, amount, partial, 'OFFICIAL_KRW_HOURLY_CANDLE')
+            item.update(market=market, hours=len(valid), amount_hours=len(valid),
+                        base_volume=sum((Decimal(h['base_volume']) for h in valid), ZERO) if valid else None,
+                        status='TURNOVER_UNAVAILABLE' if venue in ('korbit', 'gopax') else
+                        'ROLLING_COLLECTING' if any(h['status'] == 'COLLECTING' for h in hours) else
+                        'INCOMPLETE_HOURS' if partial else 'COMPLETE')
+            rows.append(item)
+        domestic = grid(rows, query)
+        for venue in VENUES:
+            domestic['totals'].setdefault(venue, dict(cell(), partial=True, unavailable=True))
+        # A missing entire venue is not a complete domestic denominator.
+        partial = not rows or any(r['status'] != 'COMPLETE' for r in rows) or any(
+            domestic['totals'][v]['total'] is None for v in VENUES)
+        if partial:
+            for cells in [domestic['totals'], *(c['cells'] for c in domestic['coins'])]:
+                for value in cells.values():
+                    value['partial'] = True
+        exchanges = [dict(exchange=v, volume_krw=domestic['totals'][v]['total'],
+                          share_pct=domestic['totals'][v]['share'],
+                          complete_markets=sum(r['exchange'] == v and r['status'] == 'COMPLETE' for r in rows),
+                          market_count=sum(r['exchange'] == v for r in rows), status='PARTIAL' if partial else 'COMPLETE')
+                     for v in VENUES]
+        return dict(contract_version='INDEX_DAY_HOURLY_V1', storage_mode='ROLLING_24H_LATEST' if day == day_at(now) else 'HOURLY_ARCHIVE',
+                    day=day, start=start, end=end, status='PARTIAL' if partial else 'COMPLETE',
+                    membership='COLLECTED_KRW_MARKETS', usdt_close_krw=None, rows=rows,
+                    exchanges=exchanges, domestic=domestic)
+
     @staticmethod
     def window(query: dict) -> int:
         seconds = int(query.get('window', 10))
@@ -334,11 +388,18 @@ class Engine:
                                         feeds=[vars(copy.copy(self.feeds[k])) for k in self.expected[venue] if k in self.feeds]))
             return dict(at=end, window=seconds, partial=partial, exchanges=current, changes=changes,
                         strip=strip, point=point, connections=connections,
+                        hourly=self.archive.info() if self.archive else None,
                         clock=self.clock_info() if self.clock_info else None)
 
     def filters(self) -> dict:
+        archived = {}
+        if self.archive:
+            with self.archive.lock:
+                archived = dict(self.archive.markets)
         with self.lock:
             listings = {}
+            for venue, base in archived:
+                listings.setdefault(base, set()).add(venue)
             for venue in VENUES:
                 for base in self.tickers[venue].markets:
                     listings.setdefault(base, set()).add(venue)

@@ -15,6 +15,7 @@ import websocket
 
 from adapters import CHUNK_SIZES, REGISTRIES, SOCKETS, TICKERS, VENUES, ensure_fresh, registry, subscriptions, tickers, trades
 from engine import Engine
+from hourly import HourlyCollector
 
 LOG = logging.getLogger('marketgo')
 
@@ -219,6 +220,12 @@ class Collector:
         supervisor = threading.Thread(target=self.supervise, name='trade-supervisor', daemon=True)
         self.threads.append(supervisor)
         supervisor.start()
+        if self.engine.archive is not None:
+            hourly = HourlyCollector(self.engine, lambda url: get_json(url, self.context))
+            for venue in VENUES:
+                thread = threading.Thread(target=hourly.run, args=(venue,), name=f'hourly-{venue}', daemon=True)
+                self.threads.append(thread)
+                thread.start()
 
     def close(self):
         self.engine.stop.set()

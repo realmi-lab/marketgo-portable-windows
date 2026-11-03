@@ -17,7 +17,7 @@ export interface IndexDayRow {
   sources: string[];
 }
 export interface IndexDayResponse {
-  storage_mode?: "ROLLING_24H_LATEST" | "REALTIME_WINDOW" | "TICKER_24H";
+  storage_mode?: "ROLLING_24H_LATEST" | "REALTIME_WINDOW" | "TICKER_24H" | "HOURLY_ARCHIVE";
   window_sec?: number;
   as_of_second?: number;
   window_complete?: boolean;

@@ -1,4 +1,4 @@
-"""Loopback-only portable HTTP server; all trading state lives in memory."""
+"""Shared Windows/macOS loopback server with a persistent hourly index."""
 from __future__ import annotations
 
 import argparse
@@ -22,6 +22,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 from engine import Engine  # noqa: E402
 from collector import Collector, tls_context  # noqa: E402
 from market_clock import MarketClock  # noqa: E402
+from hourly import HourlyArchive  # noqa: E402
 
 LOG = logging.getLogger('marketgo')
 
@@ -79,13 +80,14 @@ class Handler(SimpleHTTPRequestHandler):
         engine = self.server.engine
         try:
             if parsed.path == '/api/portable/status':
-                self.send_json({'engine': 'python', 'version': '3.1.0', 'notices': False,
+                self.send_json({'engine': 'python', 'version': '3.2.0', 'notices': False,
                                 'instance_id': self.server.instance_id,
+                                'hourly': engine.archive.info() if engine.archive else None,
                                 'clock': engine.clock_info() if engine.clock_info else None})
             elif parsed.path == '/api/portable/state':
                 self.send_json(engine.state(query))
             elif parsed.path == '/api/market-share/index-day':
-                payload = engine.ticker_index(query)
+                payload = engine.index_day(query)
                 if query.get('projection') == 'domestic_grid':
                     payload = {k: payload[k] for k in ('day', 'status', 'storage_mode', 'domestic')}
                     payload['contract_version'] = 'INDEX_DAY_GRID_V1'
@@ -136,19 +138,20 @@ def main():
         context = tls_context()
         clock = MarketClock()
         clock.synchronize(context)
-        engine = Engine(clock=clock.time, clock_info=clock.info)
+        archive = HourlyArchive(ROOT / 'data' / 'index-hours.sqlite3')
+        engine = Engine(clock=clock.time, clock_info=clock.info, archive=archive, clock_sync=lambda: clock.synchronize(context))
         server.engine = engine
         collector = Collector(engine, context)
         collector.start()
         url = f'http://127.0.0.1:{args.port}/'
-        LOG.info('MarketGO Python %s; %s; notice collection OFF', sys.version.split()[0], url)
+        LOG.info('MarketGO Python %s; %s; hourly index ON; historical backfill OFF; notice collection OFF', sys.version.split()[0], url)
         if not args.no_browser:
             timer = threading.Timer(0.7, lambda: webbrowser.open(url))
             timer.daemon = True
             timer.start()
         server.serve_forever(poll_interval=0.25)
     except KeyboardInterrupt:
-        LOG.info('Stopping. In-memory trading history is discarded.')
+        LOG.info('Stopping. Realtime history is discarded; data/index-hours.sqlite3 is retained.')
     finally:
         if collector:
             collector.close()

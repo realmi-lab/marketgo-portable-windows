@@ -122,6 +122,24 @@
   text-transform: uppercase;
 }
 
+.index2-source-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 8px 0;
+  font-size: var(--type-caption);
+}
+.index2-source-control select {
+  max-width: 100%;
+  min-height: 36px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--background);
+  color: var(--foreground);
+  font: inherit;
+}
+
 .index2-date input,
 .index2-search input {
   min-height: 32px;

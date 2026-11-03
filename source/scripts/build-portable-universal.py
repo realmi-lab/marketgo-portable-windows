@@ -62,12 +62,20 @@ def main():
         for name, digest in expected.items():
             assert hashlib.sha256(result.read(name)).hexdigest() == digest, name
         for platform in ('Mac-AppleSilicon',):
-            for file in ('Start-MarketGO.command', 'marketgo'):
+            for file in ('Start-MarketGO.command', 'runtime/bin/python3'):
                 info = result.getinfo(f'MarketGO/{platform}/{file}')
                 assert (info.external_attr >> 16) & stat.S_IXUSR, info.filename
         assert result.read('MarketGO/Windows/start.bat').startswith(b'@echo off\r\n')
         assert result.read('MarketGO/README-KO.txt').decode('utf-8-sig') == readme
         assert result.read('MarketGO/THIRD-PARTY-NOTICES.txt') == notices
+        for prefix in ('app/', 'web/'):
+            windows = {n.removeprefix('MarketGO/Windows/') for n in actual_files if n.startswith('MarketGO/Windows/' + prefix)}
+            mac = {n.removeprefix('MarketGO/Mac-AppleSilicon/') for n in actual_files if n.startswith('MarketGO/Mac-AppleSilicon/' + prefix)}
+            if windows != mac or not windows:
+                raise ValueError(f'Platform source file lists differ: {prefix}')
+            for name in windows:
+                if result.read('MarketGO/Windows/' + name) != result.read('MarketGO/Mac-AppleSilicon/' + name):
+                    raise ValueError(f'Platform application bytes differ: {name}')
     receipt = {'archive': target.name, 'sha256': hashlib.sha256(target.read_bytes()).hexdigest(),
                'sources': sources, 'verified_runtime_files': len(expected)}
     (output / 'verification.json').write_text(json.dumps(receipt, indent=2) + '\n')
