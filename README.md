@@ -55,6 +55,8 @@ Mac 종류는 Apple 메뉴 → **이 Mac에 관하여**에서 확인합니다.
 [소스코드](https://github.com/realmi-lab/marketgo-portable-windows/tree/main/source)에는 Windows Python 서버,
 공통 React 화면, Mac 네이티브 Go 서버와 빌드 스크립트가 들어 있습니다.
 포터블 실행에는 개발 도구가 필요하지 않습니다. 아래 도구는 직접 다시 빌드할 때만 필요합니다.
+Python 개발·검사용 패키지와 버전은 저장소 최상단의 `requirements.txt`에 있습니다.
+저장소 루트에서 `python -m pip install -r requirements.txt`로 설치할 수 있습니다.
 
 ```text
 build/MarketGO-Portable.zip     Windows + Apple Silicon Mac 통합 포터블

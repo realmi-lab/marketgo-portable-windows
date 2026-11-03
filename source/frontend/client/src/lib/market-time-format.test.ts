@@ -5,6 +5,13 @@ import {
   formatRecentMarketTimeMS,
 } from "./market-time-format.ts";
 
+test("08:34:44 UTC is displayed as 17:34:44 Korean time", () => {
+  assert.equal(
+    formatMarketTimeMS(Date.parse("2026-11-03T08:34:44Z"), "time-seconds"),
+    "17:34:44"
+  );
+});
+
 test("market timestamps preserve Korean date boundaries regardless of device timezone", () => {
   const previous = process.env.TZ;
   try {

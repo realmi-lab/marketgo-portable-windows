@@ -481,7 +481,7 @@ function ExtendedStripWindows() {
 }
 
 /** The once-a-second line under the menu, with a pause for reading. */
-export function LiveStrip({ onRefresh, refreshing = false, showDetails = true, extendedWindows = false }: { onRefresh?: () => void; refreshing?: boolean; showDetails?: boolean; extendedWindows?: boolean } = {}) {
+export function LiveStrip({ onRefresh, refreshing = false, showDetails = true, extendedWindows = false, showTimeZone = false }: { onRefresh?: () => void; refreshing?: boolean; showDetails?: boolean; extendedWindows?: boolean; showTimeZone?: boolean } = {}) {
   const { flow, visible, window, partial } = useShownFlow();
   const { connection, livePaused, setLivePaused } = useMarketStream();
   const shareFor = (seconds: number) =>
@@ -500,6 +500,7 @@ export function LiveStrip({ onRefresh, refreshing = false, showDetails = true, e
         <span className="mg-strip-label">실시간</span>
         <span className="mg-strip-clock mg-num">
           {formatMarketTimeMS(flow?.as_of_ms, "time-seconds")}
+          {showTimeZone ? " KST" : ""}
         </span>
       </span>
       {[10, 30, 60].map(seconds => (

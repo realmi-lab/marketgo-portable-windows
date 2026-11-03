@@ -45,7 +45,7 @@ export default function StandaloneShell(){
  const errors=current?.connections.filter(c=>c.ticker_error||c.feeds.some(f=>f.state==='ERROR'))??[];
  return <div className="mg mg-portable" data-screen="portable">
   <header className="portable-header"><strong>MarketGO Portable</strong><div className="portable-index-toolbar" ref={setHost}/><button className="portable-theme-button" onClick={toggleTheme} aria-label={theme==='dark'?'밝은 화면으로':'어두운 화면으로'}>{theme==='dark'?<Sun size={18}/>:<Moon size={18}/>}</button></header>
-  <section className="mg-strip" aria-label="실시간 요약"><span className="mg-strip-now"><span className="mg-pulse" data-off={!current||feed.error?'':undefined}/><span>실시간</span><span className="mg-strip-clock mg-num">{formatMarketTimeMS(current?current.at*1000:undefined,'time-seconds')}</span></span>
+  <section className="mg-strip" aria-label="실시간 요약"><span className="mg-strip-now"><span className="mg-pulse" data-off={!current||feed.error?'':undefined}/><span>실시간</span><span className="mg-strip-clock mg-num">{formatMarketTimeMS(current?current.at*1000:undefined,'time-seconds')} KST</span></span>
    {[10,30,60,600,1800,3600].map(seconds=>{const row=current?.strip.find(r=>r.window===seconds);return <span key={seconds} className="mg-strip-wide" title={row?.partial?'현재 PC에서 관측한 구간의 값입니다.':'최근 구간 체결 점유율'}>{seconds===10?'빗썸 ':''}{windowLabel(seconds)} <b className="mg-num"><LiveValue value={row?.share}>{formatSharePercent(row?.share)}</LiveValue></b></span>})}
    <span className="mg-strip-fill"/><button className="mg-button" onClick={()=>setRefresh(n=>n+1)} disabled={refreshing}><RefreshCw size={16}/>{refreshing?'갱신 중':'새로고침'}</button>
   </section>

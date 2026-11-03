@@ -51,7 +51,7 @@ function PortableContent() {
           {theme === "dark" ? <Sun size={18} aria-hidden="true" /> : <Moon size={18} aria-hidden="true" />}
         </button>
       </header>
-      <LiveStrip showDetails={false} extendedWindows onRefresh={() => setRefreshVersion(value => value + 1)} refreshing={indexRefreshing} />
+      <LiveStrip showDetails={false} extendedWindows showTimeZone onRefresh={() => setRefreshVersion(value => value + 1)} refreshing={indexRefreshing} />
       <StreamNote />
       <main className="portable-columns" aria-label="포터블 대시보드">
         <section className="portable-index" aria-label="코인 인덱스">

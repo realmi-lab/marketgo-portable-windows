@@ -9,7 +9,7 @@
     "preview": "vite preview --host",
     "check": "tsc --noEmit",
     "format": "prettier --write .",
-    "test": "node --test client/src/lib/chart-interaction.test.ts client/src/lib/flow-chart-time-axis.test.ts client/src/lib/portable-share-history.test.ts client/src/lib/coin-table-query.test.ts client/src/lib/index-refresh.test.ts client/src/lib/index-day.test.ts"
+    "test": "node --test client/src/lib/chart-interaction.test.ts client/src/lib/flow-chart-time-axis.test.ts client/src/lib/portable-share-history.test.ts client/src/lib/coin-table-query.test.ts client/src/lib/index-refresh.test.ts client/src/lib/index-day.test.ts client/src/lib/market-time-format.test.ts"
   },
   "dependencies": {
     "graphology": "^0.26.0",

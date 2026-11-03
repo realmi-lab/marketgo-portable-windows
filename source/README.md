@@ -51,7 +51,7 @@ Python 검사는 별도의 개발용 가상환경에 고정된 테스트 의존�
 
 ```sh
 python3 -m venv .venv
-.venv/bin/python -m pip install --require-hashes -r tests/portable_python/requirements.txt
+.venv/bin/python -m pip install --require-hashes -r ../requirements.txt
 PYTHONPATH=scripts/portable-python .venv/bin/python -m unittest discover -s tests/portable_python -v
 ```
 
