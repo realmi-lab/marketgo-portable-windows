@@ -1,0 +1,106 @@
+/* Main-app explanations live beside their titles at every viewport size.
+   Unix never loads this stylesheet. */
+:is(.mg, .main-dashboard) .mobile-description-copy {
+  display: none;
+}
+
+:is(.mg, .main-dashboard) .mobile-help-heading {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+:is(.mg, .main-dashboard) .mobile-help-heading > :first-child {
+  min-width: 0;
+}
+
+:is(.mg, .main-dashboard) .mobile-help-trigger {
+  width: 2.75rem;
+  height: 2.75rem;
+  flex: 0 0 2.75rem;
+  align-items: center;
+  justify-content: center;
+  margin-block: -0.5rem;
+  border: 0;
+  background: transparent;
+  padding: 0.75rem;
+  color: var(--muted-foreground);
+  touch-action: manipulation;
+}
+
+:is(.mg, .main-dashboard) .main-help-all-sizes-trigger {
+  display: inline-flex;
+}
+
+:is(.mg, .main-dashboard) .mobile-help-trigger svg {
+  width: 1.125rem;
+  height: 1.125rem;
+}
+
+:is(.mg, .main-dashboard) .mobile-help-trigger[aria-expanded="true"] {
+  background: var(--secondary);
+  color: var(--primary);
+}
+
+@media (max-width: 767px) {
+  .mg .mobile-help-trigger {
+    display: inline-flex;
+  }
+}
+
+/* This portal is created only by a trigger inside a main-app shell. */
+.main-mobile-help-popup {
+  z-index: 1100;
+  overflow: auto;
+  overscroll-behavior: contain;
+  border: 1px solid var(--border);
+  border-radius: 1rem;
+  background: var(--popover);
+  color: var(--foreground);
+  box-shadow: 0 12px 48px rgb(0 0 0 / 30%);
+  font-family: var(--font-sans);
+  font-size: var(--type-body);
+  line-height: 1.65;
+  text-align: left;
+  overflow-wrap: anywhere;
+}
+
+.main-mobile-help-header {
+  position: sticky;
+  top: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--popover);
+  padding: 0.5rem 0.5rem 0.5rem 1rem;
+}
+
+.main-mobile-help-title {
+  font-size: var(--type-body);
+  font-weight: 600;
+  line-height: 1.5rem;
+}
+
+.main-mobile-help-close {
+  min-width: 2.75rem;
+  min-height: 2.75rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border);
+  border-radius: 0.75rem;
+  background: var(--secondary);
+  padding: 0.5rem 0.75rem;
+  font-size: var(--type-body);
+  touch-action: manipulation;
+}
+
+.main-mobile-help-content {
+  padding: 1rem;
+}
+
+.main-mobile-help-popup :focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 2px;
+}

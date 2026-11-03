@@ -1,0 +1,1930 @@
+/*
+ * Main dashboard screens. Every rule is scoped under .mg so the old pages,
+ * the notice portal and /unix/ keep their own styles. Colours come from the
+ * theme tokens in index.css; sizes follow docs/ui-typography.md (type steps
+ * only, weights 400-700, spacing on the 4px grid).
+ *
+ * On a wide screen cards keep a fixed height (data-size) so nothing on a
+ * page moves while figures arrive, update or the window changes; longer
+ * content scrolls inside its card. On a phone (900px or narrower) every card
+ * is as tall as its content instead.
+ */
+.mg {
+  --mg-gutter: 32px;
+  --mg-card-s: 360px;
+  --mg-card-m: 460px;
+  --mg-card-l: 560px;
+  --mg-card-xl: 680px;
+  --mg-line: color-mix(in srgb, var(--foreground) 8%, transparent);
+  --mg-raise:
+    inset 0 1px 0 color-mix(in srgb, var(--foreground) 5%, transparent),
+    0 16px 40px -28px rgb(0 0 0 / 70%);
+  /*
+   * Scroll cues for a box on the card colour: a soft shadow stays at each
+   * edge with more to read, and a cover moving with the content hides it
+   * once the reader reaches that end.
+   */
+  --mg-edge: color-mix(in srgb, var(--foreground) 18%, transparent);
+  --mg-cue-top:
+    linear-gradient(var(--card) 30%, transparent) top / 100% 32px no-repeat
+      local,
+    radial-gradient(farthest-side at 50% 0, var(--mg-edge), transparent) top /
+      100% 12px no-repeat scroll;
+  --mg-cue-bottom:
+    linear-gradient(transparent, var(--card) 70%) bottom / 100% 32px no-repeat
+      local,
+    radial-gradient(farthest-side at 50% 100%, var(--mg-edge), transparent)
+      bottom / 100% 12px no-repeat scroll;
+  --mg-cue-left:
+    linear-gradient(to right, var(--card) 30%, transparent) left / 32px 100%
+      no-repeat local,
+    radial-gradient(farthest-side at 0 50%, var(--mg-edge), transparent) left /
+      12px 100% no-repeat scroll;
+  --mg-cue-right:
+    linear-gradient(to left, var(--card) 30%, transparent) right / 32px 100%
+      no-repeat local,
+    radial-gradient(farthest-side at 100% 50%, var(--mg-edge), transparent)
+      right / 12px 100% no-repeat scroll;
+  display: flex;
+  flex-direction: column;
+  min-height: 100dvh;
+  background: var(--background);
+  color: var(--foreground);
+  font-size: var(--type-caption);
+  line-height: 1.45;
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+}
+.mg a {
+  color: inherit;
+}
+.mg :where(h1, h2, h3, p) {
+  margin: 0;
+}
+.mg :focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+/* Out of sight until a keyboard reaches it. */
+.mg-skip {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 50;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  transform: translateY(-200%);
+}
+.mg-skip:focus-visible {
+  transform: none;
+}
+.mg-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* A linked live viewport. Styling stays within the dashboard shell. */
+.mg .mg-chart-controls,
+.mg .mg-chart-navigator {
+  padding: 16px;
+  border-bottom: 1px solid var(--border);
+}
+.mg .mg-chart-toolbar,
+.mg .mg-chart-reading,
+.mg .mg-chart-range-caption {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 8px 16px;
+}
+.mg .mg-chart-reading {
+  justify-content: flex-start;
+  margin-top: 12px;
+  font-variant-numeric: tabular-nums;
+}
+.mg .mg-chart-mode {
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+.mg .mg-chart-mode[data-held="true"] {
+  color: var(--info);
+}
+.mg .mg-chart-follow,
+.mg .mg-chart-scrubber button {
+  min-height: 40px;
+  min-width: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  font: inherit;
+  color: var(--foreground);
+  cursor: pointer;
+}
+.mg .mg-chart-follow:disabled,
+.mg .mg-chart-scrubber button:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.mg .mg-chart-help,
+.mg .mg-chart-value-caption {
+  margin-top: 8px;
+  color: var(--muted-foreground);
+}
+.mg .mg-chart-value-caption {
+  padding: 0 16px;
+}
+.mg .live-exchange-chart-values button {
+  text-align: left;
+  cursor: pointer;
+}
+.mg .live-exchange-chart-values [data-hidden="true"] {
+  opacity: 0.45;
+}
+.mg .mg-chart-brush {
+  width: 100%;
+  height: 80px;
+  margin-top: 8px;
+}
+.mg .mg-chart-brush-handle {
+  touch-action: none;
+  cursor: ew-resize;
+}
+.mg .mg-chart-brush-pan {
+  touch-action: none;
+  cursor: grab;
+}
+.mg .mg-chart-scrubber {
+  display: grid;
+  grid-template-columns: auto 40px minmax(40px, 1fr) 40px;
+  align-items: center;
+  gap: 8px;
+}
+.mg .mg-chart-scrubber input {
+  width: 100%;
+  min-width: 0;
+  height: 40px;
+  accent-color: var(--foreground);
+}
+
+/* ---------- top navigation: one line, never taller ---------- */
+.mg-nav {
+  position: sticky;
+  top: 0;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 60px;
+  padding: 0 var(--mg-gutter);
+  padding-top: env(safe-area-inset-top, 0px);
+  border-bottom: 1px solid var(--border);
+  background: color-mix(in srgb, var(--background) 82%, transparent);
+  backdrop-filter: blur(16px);
+}
+.mg-brand {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--type-body);
+  font-weight: 700;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.mg-brand i {
+  width: 12px;
+  height: 12px;
+  border-radius: 4px;
+  background: var(--exchange-bithumb);
+  box-shadow: 0 0 12px
+    color-mix(in srgb, var(--exchange-bithumb) 60%, transparent);
+}
+/* Ten menus scroll sideways on a narrow window instead of wrapping. */
+.mg-tabs {
+  display: flex;
+  flex: 1 1 auto;
+  min-width: 0;
+  gap: 4px;
+  height: 100%;
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+.mg-tabs::-webkit-scrollbar {
+  display: none;
+}
+/* Between a phone and 1024px the ten menus would scroll past the edge, where
+   a mouse cannot reach them, so they draw closer. */
+@media (min-width: 901px) and (max-width: 1023px) {
+  .mg-tabs {
+    gap: 0;
+  }
+  .mg-tabs .mg-tab {
+    padding: 0 4px;
+  }
+}
+.mg-tab {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  height: 100%;
+  padding: 0 12px;
+  border-bottom: 2px solid transparent;
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+  font-weight: 500;
+  text-decoration: none;
+  white-space: nowrap;
+}
+.mg-tab:hover {
+  color: var(--foreground);
+}
+.mg-tab[aria-current="page"] {
+  border-bottom-color: var(--primary);
+  color: var(--foreground);
+  font-weight: 600;
+}
+.mg-nav-side {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 12px;
+  color: var(--muted-foreground);
+}
+/* The status chip keeps its width while its words change. */
+.mg-nav-data .mg-chip {
+  justify-content: center;
+  min-width: 116px;
+}
+.mg-icon-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: transparent;
+  color: var(--muted-foreground);
+  cursor: pointer;
+}
+.mg-icon-button:hover {
+  color: var(--foreground);
+}
+
+/* ---------- live strip: one line under the menu ---------- */
+.mg-strip {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 44px;
+  padding: 0 var(--mg-gutter);
+  overflow: hidden;
+  border-bottom: 1px solid var(--border);
+  background: var(--secondary);
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+.mg-strip b {
+  display: inline-block;
+  min-width: 56px;
+  color: var(--foreground);
+  font-weight: 600;
+}
+.mg-strip-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--foreground);
+  font-weight: 600;
+}
+.mg-strip-clock {
+  font-size: var(--type-body);
+}
+.mg-strip-fill {
+  flex: 1 1 0;
+}
+.mg-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 1px solid var(--input);
+  border-radius: 8px;
+  background: transparent;
+  color: var(--foreground);
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+}
+.mg-button:hover {
+  background: var(--accent);
+}
+
+/* The stream's own message floats over the page so nothing moves. */
+.mg-stream-slot {
+  position: fixed;
+  bottom: 24px;
+  left: 50%;
+  z-index: 45;
+  width: min(640px, calc(100% - 32px));
+  transform: translateX(-50%);
+  pointer-events: none;
+}
+.mg-stream-note {
+  padding: 12px 16px;
+  border: 1px solid color-mix(in srgb, var(--gold) 50%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--gold) 14%, var(--popover));
+  box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  color: var(--foreground);
+  pointer-events: auto;
+}
+.mg-stream-note[data-tone="alert"] {
+  border-color: color-mix(in srgb, var(--loss) 50%, transparent);
+  background: color-mix(in srgb, var(--loss) 14%, var(--popover));
+}
+
+/* ---------- page and grid ---------- */
+/* The notice draft stays mounted in the shell (a frame reloads when it is
+   moved), so it follows the notices screen as a second page section. */
+.mg-page-lead {
+  padding-bottom: 0;
+}
+.mg-page-follow {
+  padding-top: 16px;
+}
+.mg-main {
+  flex: 1 1 auto;
+}
+/* The screen takes focus when it opens, for screen readers; no ring. */
+.mg-main:focus-visible {
+  outline: none;
+}
+.mg-page {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  box-sizing: border-box;
+  width: 100%;
+  max-width: 1360px;
+  margin: 0 auto;
+  padding: 24px var(--mg-gutter) 80px;
+}
+/* A wide screen gives the coin index's three panes its whole width. */
+@media (min-width: 901px) {
+  .mg-page-wide {
+    max-width: none;
+    padding: 0;
+  }
+}
+.mg-grid {
+  display: grid;
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  gap: 16px;
+}
+.mg-span-3 {
+  grid-column: span 3;
+}
+.mg-span-4 {
+  grid-column: span 4;
+}
+.mg-span-5 {
+  grid-column: span 5;
+}
+.mg-span-6 {
+  grid-column: span 6;
+}
+.mg-span-7 {
+  grid-column: span 7;
+}
+.mg-span-8 {
+  grid-column: span 8;
+}
+.mg-span-9 {
+  grid-column: span 9;
+}
+.mg-span-12 {
+  grid-column: span 12;
+}
+
+/* ---------- cards ---------- */
+.mg-card {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  min-width: 0;
+  padding: 16px 20px;
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  background: var(--card);
+  box-shadow: var(--mg-raise);
+}
+.mg-card[data-size="s"] {
+  height: var(--mg-card-s);
+}
+.mg-card[data-size="m"] {
+  height: var(--mg-card-m);
+}
+.mg-card[data-size="l"] {
+  height: var(--mg-card-l);
+}
+.mg-card[data-size="xl"] {
+  height: var(--mg-card-xl);
+}
+.mg-card-head {
+  display: flex;
+  flex: none;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 12px;
+}
+/* The title keeps room to read; actions move under it when they cannot. */
+.mg-card-title {
+  flex: 1 1 240px;
+  min-width: 0;
+}
+.mg-card-head h2 {
+  font-size: var(--type-subtitle);
+  font-weight: 600;
+  line-height: 1.4;
+}
+/* A note never grows past two lines; its full text is in the tooltip. */
+.mg-card-head p {
+  display: -webkit-box;
+  margin-top: 4px;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+.mg-card-actions {
+  display: flex;
+  flex: 0 1 auto;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+  max-width: 100%;
+}
+.mg-card-actions > * {
+  max-width: 100%;
+}
+/* On a wide screen a body taller than its card scrolls inside it, with the
+   scroll cues. */
+.mg-card-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+}
+.mg-card-body,
+.mg-lead,
+.mg-summary-why {
+  background: var(--mg-cue-top), var(--mg-cue-bottom), var(--card);
+}
+.mg-card-body > * {
+  flex: none;
+  margin-top: 0;
+  margin-bottom: 0;
+}
+/* The closing note sits at the bottom of every card. */
+.mg-card-body > .mg-foot {
+  margin-top: auto;
+}
+.mg-foot {
+  padding-top: 12px;
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+}
+.mg-copy {
+  font-size: var(--type-body);
+  line-height: 1.6;
+}
+.mg-empty {
+  padding: 16px 0;
+  color: var(--muted-foreground);
+}
+.mg-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.mg-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+}
+.mg-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+
+/* ---------- lead (conclusion first) ---------- */
+/* On a wide screen the summaries at the top of a screen keep one height
+   whether or not their sentences have arrived; anything longer scrolls
+   inside. */
+.mg-lead {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 24px;
+  box-sizing: border-box;
+  height: 440px;
+  overflow: auto;
+}
+.mg-summary-why {
+  box-sizing: border-box;
+  height: 184px;
+  overflow: auto;
+}
+.mg-lead-label {
+  color: var(--muted-foreground);
+}
+.mg-lead-value {
+  margin: 4px 0;
+  font-size: var(--type-display);
+  font-weight: 700;
+  line-height: 1.2;
+}
+.mg-lead-sub {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  font-size: var(--type-body);
+}
+.mg-points {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 12px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.mg-points li {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 8px;
+  font-size: var(--type-body);
+  line-height: 1.5;
+}
+.mg-points li > span:first-child {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 999px;
+  background: var(--secondary);
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+
+/* ---------- KPI tiles: fixed height, two-line detail ---------- */
+.mg-kpis {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+.mg-kpi {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  min-width: 0;
+  height: 124px;
+  padding: 12px 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+}
+.mg-kpi-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow: hidden;
+  color: var(--muted-foreground);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mg-tag {
+  flex: none;
+  padding: 0 8px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  color: var(--muted-foreground);
+  font-style: normal;
+  line-height: 1.5;
+}
+.mg-kpi strong {
+  font-size: var(--type-title);
+  font-weight: 700;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+.mg-kpi em {
+  display: -webkit-box;
+  overflow: hidden;
+  font-style: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+/* ---------- live hero (실시간) ---------- */
+.mg-hero {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 12px;
+}
+.mg-gauge {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  box-sizing: border-box;
+  min-width: 0;
+  height: 180px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--secondary);
+}
+.mg-gauge-label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0 8px;
+  color: var(--muted-foreground);
+}
+.mg-gauge-value {
+  font-size: var(--type-display);
+  font-weight: 700;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+.mg-gauge-detail {
+  display: -webkit-box;
+  overflow: hidden;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+/* "직전 10초 20.83%" moves to the next line as one piece. */
+.mg-gauge-detail .mg-muted {
+  white-space: nowrap;
+}
+.mg-gauge .mg-spark {
+  margin-top: auto;
+}
+.mg-hero-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 32px;
+  overflow: hidden;
+}
+.mg-hero-status .mg-copy {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* ---------- tables ---------- */
+.mg-table-wrap {
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  background: var(--mg-cue-left), var(--mg-cue-right);
+}
+/*
+ * In a card a long table takes the room left (on a phone, up to 560px) and
+ * scrolls both ways itself, so its header row stays in view.
+ */
+.mg-card-body > .mg-table-wrap[data-long] {
+  flex: 1 1 0;
+  min-height: 240px;
+  overflow: auto;
+  background:
+    var(--mg-cue-bottom), var(--mg-cue-left), var(--mg-cue-right), var(--card);
+}
+.mg-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+/*
+ * A cell breaks a word only when it cannot fit, so a narrow column is sized
+ * to whole words instead of one letter a line.
+ */
+.mg-table th,
+.mg-table td {
+  overflow-wrap: break-word;
+}
+.mg-table th {
+  position: sticky;
+  top: 0;
+  z-index: 1;
+  padding: 8px;
+  border-bottom: 1px solid var(--input);
+  /* The card colour laid over the page, so rows never show through. */
+  background: linear-gradient(var(--card), var(--card)), var(--background);
+  color: var(--muted-foreground);
+  font-weight: 500;
+  text-align: left;
+  vertical-align: bottom;
+  white-space: nowrap;
+}
+/* A column of bars takes a share of a wide table, and less on a phone. */
+.mg-table .mg-bar-col {
+  width: 26%;
+}
+.mg-table .mg-bar-col[data-wide] {
+  width: 40%;
+}
+.mg-table td {
+  padding: 8px;
+  border-bottom: 1px solid var(--mg-line);
+  vertical-align: middle;
+}
+.mg-table tr:last-child td {
+  border-bottom: 0;
+}
+.mg-table tbody tr:hover td {
+  background: color-mix(in srgb, var(--foreground) 4%, transparent);
+}
+.mg-table .mg-num,
+.mg-table th.mg-num {
+  text-align: right;
+}
+.mg-table tr.mg-me td {
+  background: color-mix(in srgb, var(--exchange-bithumb) 8%, transparent);
+}
+.mg-table tr.mg-me td:first-child {
+  box-shadow: inset 2px 0 0 var(--exchange-bithumb);
+}
+.mg-table tbody tr[data-selectable] {
+  cursor: pointer;
+}
+.mg-table tbody tr[data-selected] td {
+  background: var(--accent);
+}
+/* A button that reads as the row's label. */
+.mg-link {
+  min-height: 24px;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: var(--border);
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.mg-link[aria-pressed="true"] {
+  text-decoration-color: currentColor;
+}
+.mg-num {
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mg-name {
+  font-weight: 600;
+}
+.mg-table td.mg-name {
+  white-space: nowrap;
+}
+/* One entry of a list in a cell, such as "BTC +0.12%p", kept on one line. */
+.mg-line {
+  white-space: nowrap;
+}
+
+/* ---------- small parts ---------- */
+.mg-up {
+  color: var(--profit);
+}
+.mg-down {
+  color: var(--loss);
+}
+.mg-attn {
+  color: var(--gold);
+}
+.mg-muted {
+  color: var(--muted-foreground);
+}
+.mg-bt {
+  color: var(--exchange-bithumb-text);
+}
+.mg-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 100%;
+  min-height: 28px;
+  padding: 0 12px;
+  border: 1px solid var(--input);
+  border-radius: 999px;
+  color: var(--foreground);
+  font-weight: 500;
+  white-space: nowrap;
+  text-decoration: none;
+}
+.mg-chip[data-tone="warn"] {
+  border-color: color-mix(in srgb, var(--gold) 60%, transparent);
+  background: color-mix(in srgb, var(--gold) 10%, transparent);
+  color: var(--gold);
+}
+.mg-chip[data-tone="alert"] {
+  border-color: color-mix(in srgb, var(--loss) 60%, transparent);
+  background: color-mix(in srgb, var(--loss) 10%, transparent);
+  color: var(--loss);
+}
+.mg-chip[data-tone="ok"] {
+  border-color: color-mix(in srgb, var(--profit) 50%, transparent);
+  color: var(--profit);
+}
+.mg-chip[data-tone="muted"] {
+  color: var(--muted-foreground);
+}
+.mg-dot {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--gold);
+}
+/* The ring grows and fades by transform and opacity only, which the browser
+   composites without repainting the page every frame. */
+.mg-pulse {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--profit);
+}
+.mg-pulse::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: inherit;
+  animation: mg-pulse 1.6s ease-out infinite;
+}
+.mg-pulse[data-off] {
+  background: var(--muted-foreground);
+}
+.mg-pulse[data-off]::after {
+  animation: none;
+  opacity: 0;
+}
+@keyframes mg-pulse {
+  from {
+    opacity: 0.55;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3);
+  }
+}
+/* A live figure lights up for a moment when it goes up or down. */
+.mg-live {
+  border-radius: 4px;
+}
+.mg-live[data-flash="up"] {
+  animation: mg-flash-up 1.2s ease-out;
+}
+.mg-live[data-flash="down"] {
+  animation: mg-flash-down 1.2s ease-out;
+}
+@keyframes mg-flash-up {
+  0% {
+    background: color-mix(in srgb, var(--profit) 34%, transparent);
+    color: var(--profit);
+  }
+  100% {
+    background: transparent;
+  }
+}
+@keyframes mg-flash-down {
+  0% {
+    background: color-mix(in srgb, var(--loss) 34%, transparent);
+    color: var(--loss);
+  }
+  100% {
+    background: transparent;
+  }
+}
+.mg-ex {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.mg-ex i {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+}
+/* One line of buttons; a narrow card scrolls it instead of wrapping. */
+.mg-seg {
+  display: inline-flex;
+  gap: 2px;
+  max-width: 100%;
+  padding: 4px;
+  overflow-x: auto;
+  border-radius: 12px;
+  background: var(--secondary);
+  scrollbar-width: none;
+}
+.mg-seg::-webkit-scrollbar {
+  display: none;
+}
+.mg-seg button {
+  flex: none;
+  min-height: 32px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.mg-seg button[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--foreground);
+  font-weight: 600;
+}
+.mg-band {
+  display: flex;
+  gap: 2px;
+  height: 12px;
+  overflow: hidden;
+  border-radius: 4px;
+}
+.mg-band span {
+  display: block;
+  min-width: 2px;
+  height: 100%;
+  transition: width 400ms ease;
+}
+.mg-bar {
+  position: relative;
+  height: 8px;
+  overflow: hidden;
+  border-radius: 4px;
+  background: var(--secondary);
+}
+.mg-bar span {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 4px;
+  transition: width 400ms ease;
+}
+.mg-legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  color: var(--muted-foreground);
+}
+.mg-legend button {
+  display: inline-flex;
+  align-items: center;
+  min-height: 28px;
+  padding: 0 8px;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: none;
+  color: var(--muted-foreground);
+  font: inherit;
+  cursor: pointer;
+}
+.mg-legend button:hover {
+  border-color: var(--border);
+  color: var(--foreground);
+}
+.mg-legend button[aria-pressed="false"] {
+  opacity: 0.45;
+  text-decoration: line-through;
+}
+.mg-swatch {
+  display: inline-block;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-right: 8px;
+  border-radius: 2px;
+}
+.mg-swatch[data-dashed] {
+  width: 12px;
+  height: 0;
+  border-top: 2px dashed currentColor;
+  border-radius: 0;
+}
+.mg-swatch[data-tick] {
+  width: 2px;
+  height: 12px;
+  border-radius: 1px;
+}
+.mg-list {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mg-list > li {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 12px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--mg-line);
+}
+.mg-list > li:last-child {
+  border-bottom: 0;
+}
+/* A label and its figure that never break apart, e.g. "10초 +0.12%p". */
+.mg-pair {
+  display: inline-block;
+  margin-left: 8px;
+  white-space: nowrap;
+}
+
+/* ---------- charts ---------- */
+.mg-plot {
+  position: relative;
+  border-radius: 8px;
+  outline: none;
+  touch-action: pan-y;
+}
+.mg-plot:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 4px;
+}
+.mg-plot[data-choosable] {
+  cursor: pointer;
+}
+.mg-chart {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.mg-chart text {
+  fill: var(--muted-foreground);
+}
+.mg-chart .mg-value-label {
+  fill: var(--foreground);
+  font-weight: 600;
+  paint-order: stroke;
+  stroke: var(--card);
+  stroke-width: 4px;
+  stroke-linejoin: round;
+}
+.mg-chart .mg-value-label[data-strong] {
+  fill: var(--exchange-bithumb-text);
+}
+.mg-guide {
+  stroke: var(--foreground);
+  stroke-dasharray: 2 4;
+  stroke-opacity: 0.4;
+  pointer-events: none;
+}
+.mg-dot-chosen {
+  stroke: var(--foreground);
+  stroke-width: 2px;
+}
+.mg-chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  margin: 0;
+  border: 1px dashed var(--border);
+  border-radius: 12px;
+  text-align: center;
+}
+/* Placed by the chart (left and top) so it always stays inside it. */
+.mg-tip {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 5;
+  box-sizing: border-box;
+  min-width: min(168px, 100%);
+  max-width: min(280px, 100%);
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--popover);
+  box-shadow: 0 12px 32px rgb(0 0 0 / 35%);
+  color: var(--popover-foreground);
+  pointer-events: none;
+}
+.mg-tip-title {
+  font-weight: 600;
+}
+.mg-tip dl {
+  display: grid;
+  gap: 4px;
+  margin: 4px 0 0;
+}
+.mg-tip dl > div {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+.mg-tip dt {
+  display: inline-flex;
+  align-items: center;
+  color: var(--muted-foreground);
+}
+.mg-tip dd {
+  margin: 0;
+  font-weight: 600;
+  text-align: right;
+}
+/* A tooltip that lists marks (notices) is wider, and their text wraps. */
+.mg-tip:has(.mg-tip-marks) {
+  max-width: min(360px, 100%);
+}
+.mg-tip-marks {
+  display: grid;
+  gap: 8px;
+  margin: 8px 0 0;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--border);
+  list-style: none;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+}
+.mg-tip-mark-label {
+  display: flex;
+  align-items: center;
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+.mg-tip-mark-more {
+  color: var(--muted-foreground);
+}
+.mg-tip-hint {
+  margin-top: 4px;
+  color: var(--muted-foreground);
+}
+/* A small chart's tooltip (a coin tile's line) is as narrow as the chart: a
+   value that does not fit beside its label goes under it, never breaking a
+   word. */
+.mg-plot[data-small] .mg-tip dl > div {
+  flex-wrap: wrap;
+  row-gap: 0;
+}
+.mg-plot[data-small] .mg-tip dt,
+.mg-plot[data-small] .mg-tip dd {
+  white-space: nowrap;
+}
+.mg-plot[data-small] .mg-tip dd {
+  margin-left: auto;
+}
+/* A new second slides in from the right. */
+.mg-slide {
+  animation: mg-slide 900ms linear both;
+}
+@keyframes mg-slide {
+  from {
+    transform: translateX(var(--mg-slide, 0px));
+  }
+  to {
+    transform: none;
+  }
+}
+.mg-spark {
+  display: block;
+  width: 100%;
+  overflow: visible;
+}
+.mg-spark-head {
+  animation: mg-blink 1.6s ease-out infinite;
+}
+@keyframes mg-blink {
+  50% {
+    opacity: 0.35;
+  }
+}
+
+/* ---------- coin tiles (코인 인덱스 2): seven a row ---------- */
+/* Times keep their width as they tick, so the lines do not rewrap. */
+.mg-coin-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-variant-numeric: tabular-nums;
+}
+/* On a wide screen the line for notes is one line, kept while empty, so the
+   tiles never move; its full text is in the tooltip. */
+.mg-coin-note {
+  min-height: 20px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.mg-coin-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mg-coin {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--card);
+  container-type: inline-size;
+}
+/* The coin's name, a size up and bold, then the minute's trading and
+   Bithumb's share at one size, on one line. */
+.mg-coin-head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin: 0;
+  font-size: var(--type-caption);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+/* Short of room, a long name gives way, never a figure. */
+.mg-coin-name {
+  min-width: 0;
+  margin-right: auto;
+  overflow: hidden;
+  font-size: var(--type-body);
+  font-weight: 700;
+  text-overflow: ellipsis;
+}
+.mg-coin-volume {
+  color: var(--muted-foreground);
+}
+.mg-coin-share {
+  color: var(--exchange-bithumb-text);
+}
+/* A tile under 200px inside (phones, and between layouts) gives the name its
+   own line and the figures the next, where only a very large amount gives
+   way. */
+@container (max-width: 199px) {
+  .mg-coin-head {
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+  .mg-coin-name {
+    flex-basis: 100%;
+  }
+  .mg-coin-volume {
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+  .mg-coin-share {
+    margin-left: auto;
+  }
+}
+/* A coin's live line (LiveLine) and its scale, drawn behind its chart's
+   frame. Both leave 12px on the right for the newest point's pulse. Each new
+   second flips data-odd, and the new animation name plays the slide and the
+   pulse again without rebuilding the line, so it rests when seconds stop
+   coming. */
+.mg-live-grid,
+.mg-live-flow {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: calc(100% - 12px);
+  pointer-events: none;
+}
+.mg-live-grid line {
+  stroke: var(--grid-stroke);
+  stroke-dasharray: 2 4;
+}
+.mg-live-flow {
+  height: 100%;
+  animation: mg-slide 900ms linear both;
+}
+.mg-live-flow[data-odd] {
+  animation-name: mg-slide-again;
+}
+@keyframes mg-slide-again {
+  from {
+    transform: translateX(var(--mg-slide, 0px));
+  }
+  to {
+    transform: none;
+  }
+}
+.mg-live-flow svg {
+  display: block;
+  overflow: visible;
+}
+/* A flowing chart (FlowChart): its scale behind, its lines and times
+   scrolled by a transform the script sets every frame, clipped to the plot,
+   and a dot riding each line's right end. */
+.mg-flow {
+  position: absolute;
+  top: 0;
+  pointer-events: none;
+}
+.mg-flow-grid {
+  position: absolute;
+  inset: 0;
+}
+.mg-flow-grid line {
+  stroke: var(--grid-stroke);
+  stroke-dasharray: 2 4;
+}
+.mg-flow-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  /* Lines and times fade out at the left edge instead of being cut. */
+  mask-image: linear-gradient(to right, transparent, #000 40px);
+}
+/* The times also fade in at the right edge, where the lines meet their dots. */
+.mg-flow-clip[data-times] {
+  mask-image: linear-gradient(
+    to right,
+    transparent,
+    #000 40px,
+    #000 calc(100% - 32px),
+    transparent
+  );
+}
+.mg-flow-move {
+  position: absolute;
+  inset: 0;
+  will-change: transform;
+}
+.mg-flow-move svg {
+  display: block;
+  overflow: visible;
+}
+.mg-flow-time {
+  position: absolute;
+  bottom: 4px;
+  transform: translateX(-50%);
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mg-flow-dot {
+  top: 0;
+  will-change: transform;
+}
+.mg-live-dot,
+.mg-flow-dot {
+  position: absolute;
+  left: 100%;
+  width: 6px;
+  height: 6px;
+  margin: -3px 0 0 -3px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow:
+    0 0 0 2px var(--card),
+    0 0 10px currentColor;
+}
+.mg-live-dot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: currentColor;
+  animation: mg-live-ring 1s ease-out both;
+}
+.mg-live-flow[data-odd] .mg-live-dot::after {
+  animation-name: mg-live-ring-again;
+}
+@keyframes mg-live-ring {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3.5);
+  }
+}
+@keyframes mg-live-ring-again {
+  from {
+    opacity: 0.6;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(3.5);
+  }
+}
+
+/* ---------- orbit network (코인) ---------- */
+.mg-orbit {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mg-orbit-stage {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border-radius: 12px;
+  background: var(--background);
+}
+/* The card body scrolls, so the focus ring is drawn inside the stage. */
+.mg-orbit-stage:focus-visible {
+  outline-offset: -2px;
+}
+.mg-orbit-stage svg {
+  display: block;
+}
+.mg-orbit-flow {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.mg-orbit-ring {
+  fill: none;
+  stroke: var(--border);
+  stroke-dasharray: 2 6;
+}
+.mg-orbit-ring[data-outer] {
+  stroke-dasharray: none;
+  stroke-opacity: 0.6;
+}
+.mg-orbit-coin,
+.mg-orbit-exchange {
+  cursor: pointer;
+  transition: opacity 200ms ease;
+}
+.mg-orbit-core {
+  fill: var(--card);
+  stroke: var(--muted-foreground);
+  stroke-opacity: 0.5;
+}
+.mg-orbit-coin[data-picked] .mg-orbit-core {
+  stroke: var(--foreground);
+  stroke-opacity: 1;
+  stroke-width: 2px;
+}
+/* The coin the arrow keys are on. */
+.mg-orbit-coin[data-keyed] .mg-orbit-core {
+  stroke: var(--ring);
+  stroke-opacity: 1;
+  stroke-width: 2px;
+}
+.mg-orbit-stage text {
+  fill: var(--muted-foreground);
+}
+.mg-orbit-stage .mg-orbit-label {
+  fill: var(--foreground);
+  font-weight: 600;
+}
+.mg-orbit-stage .mg-orbit-name {
+  fill: var(--foreground);
+  font-weight: 600;
+}
+.mg-orbit-stage .mg-orbit-centre-value {
+  fill: var(--foreground);
+  font-size: var(--type-subtitle);
+  font-weight: 700;
+}
+/* Names keep a rim of the background, so they read over the lines. */
+.mg-orbit-stage .mg-orbit-label,
+.mg-orbit-stage .mg-orbit-name,
+.mg-orbit-stage .mg-orbit-centre-label,
+.mg-orbit-stage .mg-orbit-centre-value {
+  paint-order: stroke;
+  stroke: var(--background);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+/*
+ * The key, then the hint or the picked coin's exchanges: below the orbit, or
+ * on a wide stage in the column the orbit leaves free on its right, so
+ * nothing covers a coin.
+ */
+.mg-orbit-side {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.mg-orbit[data-wide] .mg-orbit-side {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  box-sizing: border-box;
+  width: 276px;
+  max-height: calc(100% - 24px);
+  padding: 12px;
+  overflow: auto;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--popover);
+}
+.mg-orbit[data-wide] .mg-orbit-side .mg-legend {
+  flex-direction: column;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.mg-orbit-detail {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  background: var(--popover);
+}
+.mg-orbit[data-wide] .mg-orbit-detail {
+  padding: 0;
+  border: none;
+}
+.mg-orbit-detail-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.mg-orbit-detail .mg-table th {
+  background: none;
+}
+.mg-orbit-hub {
+  fill: var(--background);
+  fill-opacity: 0.88;
+  stroke: var(--border);
+}
+.mg-more {
+  align-self: flex-start;
+}
+
+/* ---------- mobile bottom bar and menu sheet ---------- */
+.mg-tabbar {
+  display: none;
+}
+/* Above the floating stream note (45), which would otherwise cover and take
+   the taps of the sheet's last row while the connection is down. */
+.mg-sheet {
+  position: fixed;
+  inset: auto 0 calc(64px + env(safe-area-inset-bottom, 0px)) 0;
+  z-index: 46;
+  padding: 12px 16px;
+  border-top: 1px solid var(--border);
+  background: var(--card);
+}
+.mg-sheet ul {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.mg-sheet a {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+  padding: 0 12px;
+  border-radius: 12px;
+  background: var(--secondary);
+  font-size: var(--type-body);
+  font-weight: 500;
+  text-decoration: none;
+}
+.mg-sheet a[aria-current="page"] {
+  background: var(--accent);
+  font-weight: 600;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mg-pulse::after,
+  .mg-spark-head,
+  .mg-slide,
+  .mg-live-flow,
+  .mg-live-flow[data-odd],
+  .mg-live-dot::after,
+  .mg-live-flow[data-odd] .mg-live-dot::after,
+  .mg-live[data-flash] {
+    animation: none;
+  }
+  .mg-band span,
+  .mg-bar span {
+    transition: none;
+  }
+}
+
+@media (max-width: 1360px) {
+  .mg-tab {
+    padding: 0 8px;
+  }
+  .mg-nav-time {
+    display: none;
+  }
+}
+
+@media (max-width: 1100px) {
+  .mg-kpis,
+  .mg-hero {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mg-coin-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+  .mg-lead {
+    grid-template-columns: minmax(0, 1fr);
+    height: 640px;
+  }
+}
+
+@media (max-width: 900px) {
+  /* Editable controls avoid focus zoom even when their label uses small type. */
+  .mg :is(input:not([type="range"]):not([type="checkbox"]):not([type="radio"]), select, textarea) {
+    font-size: var(--type-body);
+  }
+
+  .mg {
+    --mg-gutter: 16px;
+  }
+  .mg-grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 12px;
+  }
+  .mg-grid > [class*="mg-span-"] {
+    grid-column: 1 / -1;
+  }
+  /*
+   * Phones stack the cards one per row, each as tall as its content, so no
+   * card leaves empty space. A card grows or shrinks when its figures change
+   * length. Figure tiles side by side take the taller one's height.
+   */
+  .mg-card[data-size],
+  .mg-lead,
+  .mg-summary-why,
+  .mg-kpi,
+  .mg-gauge {
+    height: auto;
+  }
+  .mg-lead-note:empty,
+  .mg-coin-note:empty {
+    display: none;
+  }
+  /* Content-height phone tiles have room for the complete missing-span note.
+     A desktop's two-line clamp otherwise hides the required/observed span. */
+  .mg-kpi em,
+  .mg-gauge-detail {
+    display: block;
+    overflow: visible;
+    -webkit-line-clamp: unset;
+  }
+  .mg-gauge-detail .mg-muted {
+    white-space: normal;
+  }
+  /* A phone's header follows its content, so a note wraps instead. */
+  .mg-coin-note {
+    white-space: normal;
+  }
+  /* A long table or list scrolls by itself instead of stretching the page. */
+  .mg-card-body > .mg-table-wrap[data-long],
+  .mg-card-body > .mg-list {
+    flex: none;
+    min-height: 0;
+    max-height: 560px;
+    overflow: auto;
+  }
+  .mg-card-body > .mg-list {
+    background: var(--mg-cue-top), var(--mg-cue-bottom), var(--card);
+  }
+  .mg-split {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  /* Two coins a row. */
+  .mg-coin-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .mg-page {
+    gap: 12px;
+    padding-top: 16px;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom, 0px));
+  }
+  .mg-tabs,
+  .mg-nav-time,
+  .mg-nav-question {
+    display: none;
+  }
+  .mg-nav {
+    justify-content: space-between;
+    height: 52px;
+  }
+  /* A phone's strip keeps the clock, the 10-second share, the state and
+     the pause button on one line: the delta, the leading coin, the 1-second
+     trading and the words "실시간" and "빗썸" give way, and the button shows
+     only its icon. */
+  .mg-strip {
+    gap: 8px;
+  }
+  .mg-strip-wide,
+  .mg-strip-label,
+  .mg-strip-fill {
+    display: none;
+  }
+  .mg-strip-pause {
+    flex: none;
+    min-width: 40px;
+    margin-left: auto;
+    padding: 0 8px;
+  }
+  .mg-strip-pause-name {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+  }
+  /* A long chip in a card header wraps instead of widening the page. */
+  .mg-card-actions .mg-chip {
+    white-space: normal;
+  }
+  .mg-stream-slot {
+    bottom: calc(76px + env(safe-area-inset-bottom, 0px));
+  }
+  /* A pinned coin's exchanges scroll into view above the bottom bar. */
+  .mg-orbit-side {
+    scroll-margin-bottom: calc(80px + env(safe-area-inset-bottom, 0px));
+  }
+  .mg-tabbar {
+    position: fixed;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    z-index: 40;
+    display: grid;
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+    min-height: 64px;
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+    border-top: 1px solid var(--border);
+    background: var(--card);
+  }
+  .mg-tabbar a,
+  .mg-tabbar button {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    min-height: 56px;
+    border: 0;
+    background: transparent;
+    color: var(--muted-foreground);
+    font: inherit;
+    text-decoration: none;
+    cursor: pointer;
+  }
+  .mg-tabbar [aria-current="page"],
+  .mg-tabbar [aria-expanded="true"] {
+    color: var(--foreground);
+    font-weight: 600;
+  }
+  .mg-tabbar button {
+    position: relative;
+  }
+  /* A question being answered or answered while the user is elsewhere. */
+  .mg-tab-badge {
+    position: absolute;
+    top: 8px;
+    left: calc(50% + 8px);
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--gold);
+  }
+}
+
+/* Phones swipe through the best-quote coins (BestQuotesCard) instead of
+   stacking five tall cards; the next coin shows at the edge. */
+@media (max-width: 767px) {
+  .mg-quotes {
+    grid-auto-columns: min(86%, 320px);
+    grid-auto-flow: column;
+    /* A little room between the coins and the scrollbar. */
+    padding: 0 0 4px;
+    overflow-x: auto;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: thin;
+  }
+  .mg-quotes > * {
+    scroll-snap-align: start;
+  }
+  /* The row fills the card's scrolling body, which would clip an outer ring. */
+  .mg-quotes:focus-visible {
+    outline-offset: -2px;
+  }
+}
+
+@media (max-width: 480px) {
+  /* The label wraps above its tag; two lines are kept so values line up. */
+  .mg-kpi {
+    padding: 12px;
+  }
+  .mg-kpi-label {
+    flex-wrap: wrap;
+    align-content: flex-start;
+    gap: 0 8px;
+    min-height: 44px;
+    white-space: normal;
+  }
+  .mg-kpi strong {
+    font-size: var(--type-subtitle);
+  }
+  /* Headers wrap between words, so a table fits a phone more often. */
+  .mg-table th {
+    white-space: normal;
+  }
+  .mg-table th,
+  .mg-table td {
+    padding: 8px 4px;
+  }
+  .mg-table .mg-bar-col,
+  .mg-table .mg-bar-col[data-wide] {
+    width: auto;
+    min-width: 72px;
+  }
+  .mg-card {
+    padding: 16px;
+  }
+  .mg-lead-value {
+    font-size: var(--type-display-fluid);
+  }
+  .mg-gauge {
+    padding: 12px;
+  }
+  /* Keep whole monetary values at the same type size. The second column can
+     borrow space from the percentage tiles instead of clipping its amount. */
+  .mg-hero {
+    grid-template-columns: minmax(0, 1fr) minmax(min-content, 1fr);
+  }
+  /* The reason gets its own two lines, kept even when shorter. */
+  .mg-hero-status {
+    flex-wrap: wrap;
+    row-gap: 4px;
+  }
+  .mg-hero-status .mg-copy {
+    display: -webkit-box;
+    flex: 1 0 100%;
+    order: 1;
+    min-height: 3.2em;
+    white-space: normal;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+  }
+  .mg-gauge-value {
+    font-size: var(--type-title);
+  }
+}
+
+/* A summary's last line, kept even when empty so the summary never moves. */
+.mg-lead-note {
+  min-height: 20px;
+  margin-top: 12px;
+}

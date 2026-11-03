@@ -1,0 +1,122 @@
+name: Portable source and package QA
+on:
+  push:
+    branches: [main, codex/unified-portable-qa]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  windows-unified:
+    runs-on: windows-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v4
+      - name: Extract unified archive and inspect platform folders
+        shell: powershell
+        run: |
+          $ErrorActionPreference='Stop'
+          Expand-Archive build/MarketGO-Portable.zip -DestinationPath 'all platforms\한글 폴더!'
+          $root=Join-Path $PWD 'all platforms\한글 폴더!\MarketGO'
+          foreach($entry in @('README-KO.txt','Windows\start.bat','Windows\runtime\python.exe','Windows\app\market_clock.py','Mac-AppleSilicon\Start-MarketGO.command','Mac-AppleSilicon\marketgo')){if(-not(Test-Path (Join-Path $root $entry))){throw ('Missing '+$entry)}}
+          $readme=Get-Content (Join-Path $root 'README-KO.txt') -Raw -Encoding UTF8
+          foreach($name in @('Windows','Mac-AppleSilicon','start.bat','Start-MarketGO.command')){if($readme -notmatch [regex]::Escape($name)){throw ('README omits '+$name)}}
+          if(Test-Path (Join-Path $root 'Mac-Intel')){throw 'Intel package must not be included'}
+          Write-Host 'PASS: Windows and Apple Silicon folders and readable Korean README.'
+      - name: Check source identity and Python regressions with bundled runtime
+        shell: powershell
+        run: |
+          $ErrorActionPreference='Stop'
+          $folder=Join-Path $PWD 'all platforms\한글 폴더!\MarketGO\Windows'
+          $env:MARKETGO_SOURCE_DIR=(Join-Path $PWD 'source')
+          $env:MARKETGO_BUNDLE_DIR=$folder
+          @'
+          import hashlib, json, os, pathlib, sys, unittest
+          root = pathlib.Path(os.environ['MARKETGO_SOURCE_DIR'])
+          bundle = pathlib.Path(os.environ['MARKETGO_BUNDLE_DIR'])
+          records = json.loads((root/'SOURCE-MANIFEST.json').read_text())['files']
+          for name, digest in records.items():
+              assert hashlib.sha256((root/name).read_bytes()).hexdigest() == digest, name
+          for name in ('adapters.py','engine.py','collector.py','server.py','market_clock.py'):
+              assert (bundle/'app'/name).read_bytes() == (root/'scripts/portable-python'/name).read_bytes(), name
+          sys.path.insert(0, str(root/'scripts/portable-python'))
+          result = unittest.TextTestRunner(verbosity=2).run(unittest.defaultTestLoader.discover(str(root/'tests/portable_python')))
+          sys.exit(0 if result.wasSuccessful() else 1)
+          '@ | & (Join-Path $folder 'runtime\python.exe') -I -X utf8 -
+          if($LASTEXITCODE -ne 0){throw 'Source or regression verification failed'}
+      - name: Execute start.bat from the combined Windows folder
+        shell: powershell
+        run: |
+          $ErrorActionPreference='Stop'
+          $folder=Join-Path $PWD 'all platforms\한글 폴더!\MarketGO\Windows'
+          $oldPath=$env:PATH;$env:PATH=$env:SystemRoot+'\System32;'+$env:SystemRoot
+          $env:PYTHONHOME='bad-inherited-home';$env:PYTHONPATH='bad-inherited-path'
+          try{$launcher=Start-Process cmd.exe -ArgumentList '/d /v:on /c start.bat' -WorkingDirectory $folder -PassThru}finally{$env:PATH=$oldPath;Remove-Item Env:PYTHONHOME,Env:PYTHONPATH}
+          $clock=[Diagnostics.Stopwatch]::StartNew();$status=$null
+          while($clock.Elapsed.TotalSeconds -lt 22){try{$status=Invoke-RestMethod 'http://127.0.0.1:20560/api/portable/status' -TimeoutSec 2;if($status.engine -eq 'python'){break}}catch{};Start-Sleep -Milliseconds 300}
+          if(-not $status){Get-Content (Join-Path $folder 'logs\launcher.log');throw 'Combined BAT launch failed'}
+          if($status.version -ne '3.1.0'){throw 'Clock-corrected release was not included'}
+          if((Invoke-WebRequest 'http://127.0.0.1:20560/' -UseBasicParsing -TimeoutSec 2).StatusCode -ne 200){throw 'Frontend is unavailable'}
+          Write-Host ('PASS: unified ZIP BAT starts bundled runtime '+$status.version+' clock='+$status.clock.mode)
+      - name: Verify actual exchange and chart data from combined package
+        shell: powershell
+        run: |
+          $ErrorActionPreference='Stop'
+          $clock=[Diagnostics.Stopwatch]::StartNew();$state=$null
+          while($clock.Elapsed.TotalSeconds -lt 22){
+            $state=Invoke-RestMethod 'http://127.0.0.1:20560/api/portable/state?window=10' -TimeoutSec 2
+            if(@($state.exchanges|Where-Object {$_.trade_count -gt 0}).Count -ge 3 -and @($state.connections|Where-Object {$_.feeds.Count -gt 0}).Count -eq 5){break}
+            Start-Sleep -Milliseconds 500
+          }
+          if(@($state.exchanges|Where-Object {$_.trade_count -gt 0}).Count -lt 3){throw 'Realtime amounts are missing'}
+          $state.exchanges|ConvertTo-Json -Depth 5
+          $day=[DateTime]::UtcNow.AddHours(9).ToString('yyyy-MM-dd')
+          $ticker=Invoke-RestMethod ('http://127.0.0.1:20560/api/market-share/index-day?day='+$day+'&source=ticker_24h') -TimeoutSec 2
+          foreach($venue in @('bithumb','upbit','coinone','korbit','gopax')){if($null -eq $ticker.domestic.totals.$venue.total){throw ('No ticker '+$venue)}}
+          Write-Host 'PASS: combined package receives five official ticker venues and real trades.'
+      - name: Logs and cleanup
+        if: always()
+        shell: powershell
+        run: |
+          $folder=Join-Path $PWD 'all platforms\한글 폴더!\MarketGO\Windows'
+          foreach($name in @('logs\launcher.log','logs\runtime.log')){if(Test-Path (Join-Path $folder $name)){Get-Content (Join-Path $folder $name) -Tail 15}}
+          Get-CimInstance Win32_Process -Filter "name='python.exe'"|Where-Object {$_.CommandLine -like '*app*server.py*'}|ForEach-Object {Stop-Process -Id $_.ProcessId -Force}
+
+  rebuild-source:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    defaults:
+      run:
+        working-directory: source
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-go@v5
+        with:
+          go-version: '1.26.x'
+          cache-dependency-path: source/go.sum
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '26'
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 11.10.0
+          package_json_file: source/frontend/package.json
+      - name: Install locked frontend dependencies
+        run: pnpm --dir frontend install --frozen-lockfile
+      - name: Check types and chart/accounting regressions
+        run: |
+          pnpm --dir frontend check
+          pnpm --dir frontend test
+      - name: Rebuild both platforms and combined ZIP from published source
+        run: sh scripts/build-portable-all.sh
+      - name: Inspect rebuilt native architecture and integrity
+        run: |
+          file dist/macos-native-portable/arm64/MarketGO/marketgo
+          python3 - <<'PY'
+          import pathlib, zipfile
+          archive=pathlib.Path('dist/universal-portable/MarketGO-Portable.zip')
+          with zipfile.ZipFile(archive) as z:
+              assert z.testzip() is None
+              platforms={p.split('/')[1] for p in z.namelist() if len(p.split('/'))>2}
+              assert platforms=={'Windows','Mac-AppleSilicon'},platforms
+          print('PASS: source rebuild produces exactly Windows and Apple Silicon packages')
+          PY

@@ -1,0 +1,94 @@
+.standalone-snapshot-bar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  min-height: 38px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 8px 20px;
+  border-bottom: 1px solid rgb(255 108 0 / 42%);
+  background: #2a1708;
+  color: #fff7f0;
+  font-family:
+    "Pretendard Variable", Pretendard, -apple-system, BlinkMacSystemFont,
+    "Apple SD Gothic Neo", system-ui, sans-serif;
+  font-size: var(--type-caption);
+}
+
+.standalone-snapshot-bar > div {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.standalone-snapshot-bar strong {
+  color: #ff8a38;
+  letter-spacing: -0.01em;
+}
+
+.standalone-snapshot-bar span {
+  color: #d8c8bc;
+}
+
+.standalone-snapshot-bar span + span {
+  padding-left: 12px;
+  border-left: 1px solid rgb(255 255 255 / 18%);
+}
+
+.standalone-runtime-status {
+  flex: 0 0 auto;
+  padding: 4px 8px;
+  border: 1px solid rgb(255 138 56 / 62%);
+  border-radius: 7px;
+  background: rgb(255 108 0 / 12%);
+  color: #ffb27b;
+  font-size: var(--type-caption);
+  font-weight: 700;
+}
+
+.standalone-runtime-status[data-state="pending"]::before,
+.standalone-runtime-status[data-state="ok"]::before,
+.standalone-runtime-status[data-state="error"]::before {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  content: "";
+  vertical-align: 1px;
+}
+
+.standalone-runtime-status[data-state="ok"] {
+  border-color: rgb(52 211 153 / 68%);
+  background: rgb(16 185 129 / 13%);
+  color: #6ee7b7;
+}
+
+.standalone-runtime-status[data-state="error"] {
+  border-color: rgb(248 113 113 / 72%);
+  background: rgb(239 68 68 / 14%);
+  color: #fca5a5;
+}
+
+@media (max-width: 720px) {
+  .standalone-snapshot-bar {
+    position: relative;
+    align-items: flex-start;
+    padding: 8px 12px;
+  }
+
+  .standalone-snapshot-bar > div {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .standalone-snapshot-bar span + span {
+    padding-left: 0;
+    border-left: 0;
+  }
+}

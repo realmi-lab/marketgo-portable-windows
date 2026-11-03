@@ -1,0 +1,117 @@
+/* Compact notice timeline: one sticky info column (exchange, coins, title)
+   beside the date bars. Used by the notice portal and by the main dashboard
+   on narrow screens, so it is scoped to the component, not to a page. */
+.notice-timeline-compact {
+  --notice-timeline-info-width: 300px;
+}
+.notice-timeline-compact .notice-timeline-toolbar {
+  align-items: center;
+  padding: 12px 16px 8px;
+}
+.notice-timeline-compact .notice-timeline-toolbar h4 {
+  font-size: var(--type-body);
+}
+.notice-timeline-compact .notice-timeline-toolbar > div:last-child,
+.notice-timeline-compact .notice-timeline-count,
+.notice-timeline-compact .notice-timeline-columns,
+.notice-timeline-compact .notice-timeline-period {
+  font-size: var(--type-caption);
+}
+.notice-timeline-compact .notice-timeline-columns {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: oklch(from var(--secondary) l c h / 1);
+}
+.notice-timeline-compact .notice-timeline-columns .text-base {
+  font-size: var(--type-caption);
+}
+.notice-timeline-month-label {
+  position: sticky;
+  left: calc(var(--notice-timeline-info-width) + 8px);
+}
+.notice-timeline-compact .notice-timeline-toolbar button {
+  min-width: 44px;
+}
+.notice-timeline-compact .notice-timeline-info {
+  position: sticky;
+  left: 0;
+  z-index: 30;
+  width: var(--notice-timeline-info-width);
+  padding: 8px 12px;
+  border-right: 1px solid var(--border);
+  background: oklch(from var(--card) l c h / 1);
+}
+.notice-timeline-compact .notice-timeline-info-heading {
+  display: flex;
+  align-items: center;
+  min-height: 64px;
+  background: oklch(from var(--secondary) l c h / 1);
+}
+/* The main dashboard pads the scroller; scrolled dates would show in that
+   padding beside the sticky column, so the inset moves outside the scroller. */
+.main-dashboard .notice-timeline-compact .notice-timeline-scroll {
+  margin-inline: 1rem;
+  padding-inline: 0;
+}
+.notice-timeline-compact .notice-timeline-dates {
+  isolation: isolate;
+  z-index: 0;
+}
+.notice-timeline-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  font-size: var(--type-caption);
+  font-weight: 600;
+}
+.notice-timeline-meta > * {
+  flex-shrink: 0;
+}
+.notice-timeline-meta button,
+.notice-timeline-asset {
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--background);
+}
+.notice-timeline-detail summary {
+  cursor: pointer;
+  font-size: var(--type-body);
+  font-weight: 600;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+  padding-top: 8px;
+}
+.notice-timeline-detail > div {
+  padding-top: 8px;
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+.notice-timeline-detail p + p {
+  margin-top: 8px;
+}
+.notice-timeline-detail a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  color: var(--primary);
+}
+@media (max-width: 600px) {
+  .notice-timeline-compact {
+    --notice-timeline-info-width: 184px;
+  }
+  .notice-timeline-compact .notice-timeline-info {
+    padding: 8px 8px;
+  }
+  .notice-timeline-compact .notice-timeline-toolbar {
+    padding: 12px;
+  }
+  .notice-timeline-compact .notice-timeline-toolbar > div:last-child {
+    justify-content: flex-start;
+  }
+}

@@ -1,0 +1,35 @@
+/* Phone-only "show more" for long lists in the main dashboard. Everywhere
+   else the toggle stays hidden and every row is shown. */
+.mobile-more-toggle {
+  display: none;
+}
+
+@media (max-width: 767px) {
+  .main-dashboard .mobile-more-toggle {
+    display: flex;
+    width: 100%;
+    min-height: 2.75rem;
+    align-items: center;
+    justify-content: center;
+    border-top: 1px solid var(--border);
+    background: var(--surface-inset);
+    color: var(--primary);
+    font-size: var(--type-caption);
+    font-weight: 600;
+  }
+
+  /* A whole block folded behind its toggle. */
+  .main-dashboard .mobile-hidden {
+    display: none;
+  }
+
+  /* Keeps the first MOBILE_VISIBLE_ROWS (5) children of a collapsed list. */
+  .main-dashboard .mobile-collapsed > :nth-child(n + 6) {
+    display: none;
+  }
+
+  /* The toggle's top border separates the last visible row. */
+  .main-dashboard .mobile-collapsed > :nth-child(5) {
+    border-bottom-width: 0;
+  }
+}

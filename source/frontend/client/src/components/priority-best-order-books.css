@@ -1,0 +1,223 @@
+/*
+ * The best-quote cards (components/PriorityBestOrderBooks.tsx). They are used
+ * by the dashboard screens and by the pages from before the redesign.
+ */
+.best-book-live-indicator {
+  position: relative;
+  box-shadow: 0 0 0 0 color-mix(in oklab, var(--profit) 36%, transparent);
+}
+
+.best-book-live-indicator::after {
+  position: absolute;
+  inset: -0.25rem;
+  border: 1px solid color-mix(in oklab, var(--profit) 52%, transparent);
+  border-radius: 999px;
+  content: "";
+  animation: best-book-live-pulse 1.6s ease-out infinite;
+}
+
+.best-book-exchange-row {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.best-book-exchange-row > :not(.best-book-update-sweep) {
+  position: relative;
+  z-index: 1;
+}
+
+.best-book-update-sweep {
+  position: absolute;
+  z-index: 0;
+  inset: 0;
+  background: linear-gradient(
+    100deg,
+    transparent 10%,
+    color-mix(in oklab, var(--primary) 11%, transparent) 48%,
+    transparent 86%
+  );
+  pointer-events: none;
+  animation: best-book-update-sweep 520ms ease-out both;
+}
+
+.best-book-price-value {
+  display: inline-flex;
+  max-width: 100%;
+  align-items: center;
+  justify-content: center;
+  gap: 0.125rem;
+  border-radius: 0.3rem;
+  padding-inline: 0.25rem;
+}
+
+.best-book-price-value[data-change-direction="up"] {
+  --best-book-tick-accent: var(--profit);
+  --summary-update-offset: 0.45rem;
+}
+
+.best-book-price-value[data-change-direction="down"] {
+  --best-book-tick-accent: var(--loss);
+  --summary-update-offset: -0.45rem;
+}
+
+.best-book-price-value[data-change-direction],
+.best-book-liquidity-value[data-updated="true"],
+.best-book-quantity-value[data-updated="true"] {
+  animation: summary-headline-value-update 620ms cubic-bezier(0.22, 1, 0.36, 1)
+    both;
+  will-change: opacity, transform;
+}
+
+.best-book-direction-mark {
+  flex: 0 0 auto;
+  color: var(--best-book-tick-accent);
+  font-size: var(--type-caption);
+  line-height: 1;
+}
+
+.best-book-liquidity-value,
+.best-book-quantity-value {
+  width: fit-content;
+  max-width: 100%;
+  overflow: hidden;
+  border-radius: 0.3rem;
+  padding-inline: 0.125rem;
+  text-overflow: ellipsis;
+}
+
+.best-book-liquidity-value[data-side="ask"],
+.best-book-quantity-value[data-side="ask"] {
+  margin-left: auto;
+}
+
+.best-book-liquidity-value[data-change-direction="up"],
+.best-book-quantity-value[data-change-direction="up"] {
+  --summary-update-offset: 0.45rem;
+}
+
+.best-book-liquidity-value[data-change-direction="down"],
+.best-book-quantity-value[data-change-direction="down"] {
+  --summary-update-offset: -0.45rem;
+}
+
+.best-book-depth-balance {
+  display: flex;
+  height: 0.2rem;
+  margin-top: 0.5rem;
+  gap: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: color-mix(in oklab, var(--border) 72%, transparent);
+}
+
+.best-book-depth-balance > span {
+  display: block;
+  min-width: 2px;
+  border-radius: inherit;
+}
+
+.best-book-depth-bid {
+  background: color-mix(in oklab, var(--profit) 78%, transparent);
+}
+
+.best-book-depth-ask {
+  background: color-mix(in oklab, var(--loss) 78%, transparent);
+}
+
+@keyframes best-book-live-pulse {
+  0% {
+    opacity: 0.72;
+    transform: scale(0.7);
+  }
+  70%,
+  100% {
+    opacity: 0;
+    transform: scale(1.6);
+  }
+}
+
+@keyframes best-book-update-sweep {
+  from {
+    opacity: 0;
+    transform: translateX(-45%);
+  }
+  24% {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+    transform: translateX(45%);
+  }
+}
+
+/* Phones: prices need a full row; side quantities must not compete with a
+   7rem middle column or be shortened by the desktop animation wrappers. The
+   old pages (.main-dashboard) and the dashboard screens (.mg) both apply. */
+@media (max-width: 767px) {
+  :is(.main-dashboard, .mg) .best-book-row-heading {
+    flex-wrap: wrap;
+    row-gap: 0.25rem;
+  }
+
+  :is(.main-dashboard, .mg) .best-book-values {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    align-items: start;
+  }
+
+  :is(.main-dashboard, .mg) .best-book-prices {
+    grid-column: 1 / -1;
+    grid-row: 1;
+    display: grid;
+    gap: 0.5rem;
+    padding: 0.75rem;
+    border: 1px solid var(--border);
+    border-radius: 0.5rem;
+    background: var(--background);
+  }
+
+  :is(.main-dashboard, .mg) .best-book-prices > div[aria-hidden="true"] {
+    display: none;
+  }
+
+  :is(.main-dashboard, .mg) .best-book-price-label {
+    display: inline;
+    margin-right: auto;
+    color: var(--muted-foreground);
+    font-family: var(--font-sans);
+    font-size: var(--type-caption);
+    font-weight: 500;
+  }
+
+  :is(.main-dashboard, .mg) .best-book-price-value {
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    font-size: var(--type-body);
+    line-height: 1.5;
+  }
+
+  :is(.main-dashboard, .mg)
+    :is(.best-book-liquidity-value, .best-book-quantity-value) {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+  }
+}
+
+/* Readers who asked for less motion see changes without the movement. */
+@media (prefers-reduced-motion: reduce) {
+  .best-book-live-indicator::after,
+  .best-book-price-value[data-change-direction],
+  .best-book-liquidity-value[data-updated="true"],
+  .best-book-quantity-value[data-updated="true"] {
+    animation: none;
+  }
+  /* Still, the sweep would stay as a band; the arrows mark the change. */
+  .best-book-update-sweep {
+    display: none;
+  }
+}

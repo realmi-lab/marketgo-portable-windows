@@ -1,0 +1,769 @@
+.mg.mg-portable {
+  min-height: 100vh;
+  min-width: 1200px;
+  padding-bottom: 0;
+}
+.mg-portable .portable-header {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 24px;
+  border-bottom: 1px solid var(--border);
+  background: var(--card);
+}
+.mg-portable .portable-header strong {
+  font-size: var(--type-subtitle);
+}
+.mg-portable .portable-header span {
+  color: var(--muted-foreground);
+}
+.mg-portable .portable-header button {
+  margin-left: auto;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+}
+.mg-portable .portable-columns {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 16px;
+  align-items: start;
+}
+.mg-portable .portable-columns > section {
+  min-width: 0;
+}
+.mg-portable .mg-card-head {
+  flex-wrap: wrap;
+}
+.mg-portable .mg-card-actions {
+  width: 100%;
+}
+.mg-portable .mg-card-actions .mg-seg {
+  flex-wrap: wrap;
+}
+.mg-portable .live-exchange-chart-values {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.mg-portable .portable-index {
+  height: calc(100vh - 148px);
+  min-height: 700px;
+  border: 1px solid var(--border);
+}
+.mg-portable .portable-index .index2-terminal {
+  display: flex;
+  height: 100%;
+}
+.mg-portable .portable-index .index2-overview {
+  flex: 0 0 240px;
+  min-width: 240px;
+  max-width: 240px;
+  width: 240px;
+}
+.mg-portable .portable-index .index2-detail {
+  flex: 1 1 0;
+  min-width: 0;
+  width: auto;
+}
+.mg-portable .portable-index .index2-scroll {
+  height: 100%;
+  overflow: auto;
+  padding: 16px;
+}
+.mg-portable .portable-index .index2-table-wrap {
+  overflow: auto;
+}
+
+.mg-portable .portable-index .index2-detail {
+  border-right: 0;
+}
+.mg-portable .portable-index .index2-detail > .index2-scroll {
+  padding-right: 0;
+  scrollbar-gutter: auto;
+}
+
+.mg-portable .index2-coin-table .breakdown .index2-bar {
+  height: 24px;
+}
+
+.mg-portable .portable-header > strong {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.mg-portable .portable-index-toolbar {
+  display: grid;
+  grid-template-columns: 142px minmax(188px, 1fr) minmax(0, 2.8fr);
+  align-items: center;
+  gap: 16px;
+  min-width: 0;
+  font-size: var(--type-caption);
+}
+.mg-portable .portable-index-toolbar .index2-date {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  margin: 0;
+}
+.mg-portable .portable-index-toolbar .index2-date input {
+  width: 100%;
+  min-height: 36px;
+}
+.mg-portable .portable-index-toolbar .portable-total {
+  display: grid;
+  gap: 8px;
+  padding-left: 16px;
+  border-left: 1px solid var(--border);
+}
+.mg-portable .portable-total strong {
+  color: var(--foreground);
+  font-size: var(--type-display);
+  font-weight: 700;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mg-portable .portable-exchange-shares {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  align-items: stretch;
+  gap: 0;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mg-portable .portable-exchange-shares li {
+  display: grid;
+  align-content: center;
+  gap: 8px;
+  min-width: 0;
+  padding: 12px 4px;
+  border-left: 1px solid var(--border);
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.mg-portable .portable-header .portable-exchange-name {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--foreground);
+  font-weight: 500;
+}
+.mg-portable .portable-exchange-name i {
+  width: 8px;
+  height: 8px;
+  flex-shrink: 0;
+}
+.mg-portable .portable-exchange-shares b {
+  color: var(--foreground);
+  font-size: var(--type-title);
+  font-weight: 600;
+  line-height: 1;
+}
+.mg-portable .portable-exchange-shares li[data-exchange="bithumb"] {
+  border-left: 2px solid var(--exchange-bithumb);
+  background: color-mix(in srgb, var(--exchange-bithumb) 8%, var(--card));
+}
+.mg-portable .portable-exchange-shares li[data-exchange="bithumb"] b {
+  font-weight: 700;
+}
+.mg-portable .portable-exchange-shares li[data-unavailable] b {
+  color: var(--muted-foreground);
+}
+
+.mg-portable .index2-bar[data-initials] > .index2-texture {
+  display: grid;
+  place-items: center;
+  container-type: inline-size;
+  overflow: hidden;
+}
+.mg-portable .index2-segment-initial {
+  display: none;
+  width: 14px;
+  height: 16px;
+  align-items: center;
+  justify-content: center;
+  background: var(--card);
+  color: var(--foreground);
+  font-size: var(--type-caption);
+  font-weight: 600;
+  line-height: 1;
+}
+@container (min-width: 18px) {
+  .mg-portable .index2-segment-initial {
+    display: grid;
+  }
+}
+
+.mg-portable .index2-terminal .index2-table.index2-coin-table {
+  width: 100%;
+  min-width: 0;
+}
+.mg-portable .index2-table.index2-coin-table .breakdown {
+  width: 100px;
+  min-width: 80px;
+  padding-left: 8px;
+}
+.mg-portable .index2-coin-table th button {
+  padding-inline: 0;
+}
+.mg-portable .index2-terminal .index2-coin-table .index2-venue-cell {
+  padding-inline: 4px;
+}
+
+.mg-portable .portable-right {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mg-portable .index2-toolbar {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.mg-portable .index2-search {
+  order: -1;
+}
+
+.mg-portable .index2-coin-table[data-fit] .index2-col-coin { width: 48px; }
+.mg-portable .index2-coin-table[data-fit] .index2-col-amount { width: 76px; }
+.mg-portable .index2-coin-table[data-fit] .index2-col-share { width: 60px; }
+.mg-portable .index2-coin-table[data-fit] .index2-col-venue { width: 64px; }
+.mg-portable .index2-coin-table[data-fit] .index2-col-unavailable { width: 48px; }
+.mg-portable .index2-coin-table[data-fit] .index2-col-combined { width: 96px; }
+.mg-portable .index2-coin-table[data-fit] .breakdown {
+  width: auto;
+  min-width: 80px;
+  padding-inline: 8px;
+}
+.mg-portable .index2-coin-table[data-fit] thead th {
+  vertical-align: bottom;
+  font-weight: 500;
+  white-space: normal;
+}
+.mg-portable .index2-coin-table[data-fit] thead th button {
+  min-height: 32px;
+  white-space: normal;
+  word-break: keep-all;
+}
+.mg-portable .index2-coin-table[data-fit] thead .breakdown {
+  padding-bottom: 20px;
+  text-align: center;
+}
+.mg-portable .index2-coin-table[data-fit] tbody th {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+.mg-portable .index2-coin-table[data-fit] tbody .num {
+  white-space: nowrap;
+}
+.mg-portable .index2-coin-table[data-fit] .index2-venue-cell > span {
+  display: block;
+  white-space: normal;
+  word-break: keep-all;
+}
+.mg-portable .index2-coin-table[data-fit] thead th button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 4px;
+}
+.mg-portable .index2-coin-table[data-fit] .index2-sort-label {
+  min-width: 0;
+}
+.mg-portable .index2-coin-table[data-fit] .index2-sort-arrow {
+  flex: 0 0 8px;
+  width: 8px;
+  font-size: var(--type-caption);
+  transform: none;
+}
+
+/* Each pane owns its scroll; the left controls never leave the viewport. */
+.mg.mg-portable {
+  height: 100dvh;
+  min-height: 0;
+  overflow: hidden;
+}
+.mg-portable > .portable-header,
+.mg-portable > .mg-strip,
+.mg-portable > .mg-stream-note {
+  flex-shrink: 0;
+}
+.mg-portable .portable-columns {
+  flex: 1;
+  min-height: 0;
+  align-items: stretch;
+  overflow: hidden;
+}
+.mg-portable .portable-index {
+  height: 100%;
+  min-height: 0;
+}
+.mg-portable .portable-index .index2-detail > .index2-scroll {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.mg-portable .index2-detail > .index2-scroll > :not(.index2-table-wrap) {
+  flex-shrink: 0;
+}
+.mg-portable .portable-index .index2-table-wrap {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  overscroll-behavior: contain;
+}
+.mg-portable .portable-index .index2-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+  background: var(--background);
+}
+.mg-portable .portable-right {
+  height: 100%;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+}
+.mg-portable .portable-right > .mg-card {
+  flex-shrink: 0;
+}
+
+.mg-portable .portable-right > .mg-card:first-child .mg-card-actions {
+  width: auto;
+  margin-left: auto;
+}
+.mg-portable .portable-window-picker .index2-filter-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-width: 112px;
+  min-height: 40px;
+  padding: 8px 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: var(--card);
+  color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
+}
+.mg-portable .portable-window-picker .index2-filter-button::after {
+  content: "▾";
+}
+.mg-portable .portable-window-picker .index2-filter-button[aria-expanded="true"]::after {
+  content: "▴";
+}
+
+.mg-portable .portable-right > .mg-card:first-child .mg-card-title {
+  display: flex;
+  align-items: baseline;
+  gap: 12px;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-card-title h2 {
+  flex-shrink: 0;
+  white-space: nowrap;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-card-title p {
+  display: block;
+  margin-top: 0;
+  overflow: visible;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-card-head {
+  align-items: center;
+}
+
+/* Dense desktop controls with clear selected and keyboard focus states. */
+.mg-portable .portable-index {
+  border-radius: 12px 0 0 12px;
+  overflow: hidden;
+}
+.mg-portable .index2-toolbar {
+  margin-bottom: 0;
+  gap: 12px;
+}
+.mg-portable .index2-search input {
+  width: 184px;
+  min-height: 36px;
+  border-radius: 6px;
+  padding-inline: 12px;
+  background: color-mix(in srgb, var(--foreground) 3%, var(--card));
+}
+.mg-portable .index2-view-switch {
+  gap: 0;
+  padding: 2px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+.mg-portable .index2-view-switch button {
+  border: 0;
+  border-radius: 4px;
+  min-height: 32px;
+}
+.mg-portable .index2-view-switch button[aria-pressed="true"] {
+  background: var(--foreground);
+  color: var(--background);
+}
+.mg-portable .index2-filters {
+  gap: 4px;
+  margin: 12px 0;
+}
+.mg-portable .index2-terminal .index2-filters button {
+  min-height: 32px;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  color: var(--foreground);
+}
+.mg-portable .index2-filters .index2-filter-button::after {
+  content: "▾";
+  color: var(--muted-foreground);
+}
+.mg-portable .index2-terminal .index2-filters button[data-active],
+.mg-portable .index2-terminal .index2-filters button[aria-expanded="true"] {
+  border-color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 8%, var(--card));
+}
+.mg-portable .index2-terminal button:focus-visible,
+.mg-portable .portable-window-picker button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.mg-portable .index2-more {
+  margin-top: 8px;
+  padding-top: 8px;
+  border-top: 1px solid var(--border);
+  gap: 8px;
+  align-items: center;
+}
+.mg-portable .index2-terminal .index2-more button {
+  border-radius: 4px;
+  padding: 4px 8px;
+}
+.mg-portable .index2-more span {
+  color: var(--muted-foreground);
+}
+.mg-portable .index2-coin-table thead th[aria-sort="ascending"],
+.mg-portable .index2-coin-table thead th[aria-sort="descending"] {
+  color: var(--foreground);
+  font-weight: 600;
+  box-shadow: inset 0 -2px var(--foreground);
+}
+.mg-portable .index2-coin-table tbody tr:hover {
+  background: color-mix(in srgb, var(--foreground) 5%, transparent);
+}
+.mg-portable .portable-right,
+.mg-portable .index2-table-wrap {
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
+}
+.portable-filter-menu {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 4px;
+  background: var(--background);
+  color: var(--foreground);
+  box-shadow: 0 8px 24px rgb(0 0 0 / 24%);
+  scrollbar-width: thin;
+}
+.portable-filter-menu button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 36px;
+  padding: 8px 12px;
+  border: 0;
+  border-radius: 4px;
+  color: var(--foreground);
+  background: transparent;
+}
+.portable-filter-menu button[aria-selected="true"] {
+  background: color-mix(in srgb, var(--foreground) 10%, var(--card));
+  color: var(--foreground);
+  font-weight: 600;
+}
+.portable-filter-menu button[aria-selected="true"]::after {
+  content: "✓";
+}
+.portable-filter-menu button:hover,
+.portable-filter-menu button:focus-visible {
+  background: var(--foreground);
+  color: var(--background);
+  outline: none;
+}
+
+.mg-portable .mg-chart-controls-inline {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 8px;
+  min-width: 0;
+  padding: 0 0 12px;
+  margin-bottom: 8px;
+}
+.mg-portable .mg-chart-inline-heading {
+  flex: 1;
+  min-width: 0;
+  margin: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: var(--type-subtitle);
+  font-weight: 600;
+}
+.mg-portable .mg-chart-controls-inline .mg-chart-toolbar {
+  display: contents;
+}
+.mg-portable .mg-chart-controls-inline .mg-seg {
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+}
+.mg-portable .mg-chart-controls-inline .mg-seg button {
+  padding: 4px;
+  min-height: 32px;
+}
+.mg-portable .mg-chart-controls-inline .mg-chart-follow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  min-width: 32px;
+  min-height: 32px;
+  padding: 4px;
+}
+.mg-portable .mg-chart-controls-inline .mg-chart-reading {
+  flex-shrink: 0;
+  flex-wrap: nowrap;
+  gap: 8px;
+  margin: 0;
+  white-space: nowrap;
+}
+.mg-portable .mg-chart-inline-help {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 32px;
+  color: var(--muted-foreground);
+  cursor: help;
+}
+.mg-portable .mg-chart-controls-inline {
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+.mg-portable .mg-chart-inline-heading {
+  display: flex;
+  align-items: baseline;
+  gap: 4px;
+  min-width: 96px;
+}
+.mg-portable .mg-chart-inline-title {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mg-portable .mg-chart-inline-window {
+  flex-shrink: 0;
+}
+
+.mg-portable .portable-exchange-shares li {
+  gap: 4px;
+}
+.mg-portable .portable-header .portable-exchange-volume {
+  color: var(--foreground);
+  font-size: var(--type-caption);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.mg-portable .portable-exchange-filter {
+  min-height: 32px;
+  width: 100%;
+}
+.mg-portable .portable-right .mg-table tbody tr[data-selectable]:hover td {
+  background: color-mix(in srgb, var(--foreground) 6%, var(--card));
+}
+.mg-portable .portable-right .mg-table tbody tr[data-selected] td:first-child {
+  box-shadow: inset 3px 0 var(--foreground);
+}
+
+.mg-portable .index2-live-status {
+  margin-bottom: 8px;
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+  font-variant-numeric: tabular-nums;
+}
+.mg-portable .index2-coin-table[data-live] th:first-child {
+  min-width: 48px;
+}
+.mg-portable .index2-terminal .index2-coin-table[data-live] .index2-venue-cell {
+  padding-left: 0;
+  padding-right: 4px;
+}
+
+/* Keep the date easy to read at the normal desktop scale. */
+.mg-portable .portable-index-toolbar {
+  grid-template-columns: 212px minmax(188px, 1fr) minmax(0, 2.8fr);
+}
+.mg-portable .portable-index-toolbar .index2-date > span {
+  font-size: var(--type-subtitle);
+  font-weight: 600;
+  color: var(--foreground);
+}
+.mg-portable .portable-index-toolbar .index2-date input {
+  min-height: 52px;
+  font-size: var(--type-title);
+  font-weight: 600;
+  padding: 8px 12px;
+}
+
+/* Reserve more of the desktop height for the live share chart. */
+.mg-portable .portable-right {
+  gap: 8px;
+}
+.mg-portable .portable-right > .mg-card:first-child {
+  padding-block: 10px;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-card-head {
+  margin-bottom: 6px;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-card-body {
+  gap: 6px;
+}
+.mg-portable .portable-window-picker .index2-filter-button {
+  min-height: 32px;
+  padding-block: 4px;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-table th {
+  padding-block: 4px;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-table td {
+  padding-block: 2px;
+}
+.mg-portable .portable-exchange-filter {
+  min-height: 28px;
+}
+.mg-portable .portable-flow-card {
+  padding-block: 10px;
+}
+.mg-portable .portable-flow-card .mg-chart-controls {
+  padding-block: 0 6px;
+  margin-bottom: 4px;
+}
+
+/* One visual language for the two sides of the desktop workspace. */
+.mg-portable .portable-connection-status {
+  padding: 6px 24px;
+  max-height: 160px;
+  overflow: auto;
+  color: var(--foreground);
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.mg-portable .portable-connection-status summary { cursor: pointer; }
+.mg-portable .portable-connection-status p { overflow-wrap: anywhere; }
+.mg-portable .portable-header .portable-theme-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 6px;
+  color: var(--muted-foreground);
+  background: transparent;
+}
+.mg-portable .portable-theme-button:hover {
+  color: var(--foreground);
+  background: color-mix(in srgb, var(--foreground) 6%, var(--card));
+}
+.mg-portable .portable-theme-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+.mg-portable .portable-exchange-shares li {
+  padding-inline: 8px;
+}
+.mg-portable .portable-index-toolbar .index2-date input {
+  border-radius: 6px;
+}
+.mg-portable .portable-right > .mg-card {
+  border-radius: 10px;
+  box-shadow: none;
+}
+.mg-portable .portable-index {
+  border-radius: 10px;
+}
+.mg-portable .index2-terminal .index2-coin-table thead th {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--muted-foreground);
+  vertical-align: bottom;
+}
+.mg-portable .index2-coin-table thead .index2-sort-label {
+  white-space: nowrap;
+}
+.mg-portable .index2-coin-table tbody th[scope="row"] {
+  padding-inline: 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.mg-portable .index2-bar[data-initials] {
+  border-radius: 3px;
+}
+.mg-portable .index2-bar[data-initials] > .index2-texture[data-exchange="bithumb"] {
+  background: var(--index2-exchange-color);
+  border: 0;
+  border-right: 1px solid var(--card);
+}
+.mg-portable .index2-bar[data-initials] > .index2-texture[data-exchange="korbit"],
+.mg-portable .portable-right > .mg-card:first-child .mg-band [data-part="korbit"] {
+  background: #fff !important;
+  box-shadow: inset 0 0 0 1px #d8d8d8;
+}
+.mg-portable .index2-texture[data-exchange="korbit"] .index2-segment-initial {
+  color: #555;
+  background: transparent;
+}
+.mg-portable .index2-segment-initial {
+  border-radius: 2px;
+  background: color-mix(in srgb, var(--card) 65%, transparent);
+  color: color-mix(in srgb, var(--foreground) 75%, transparent);
+  font-weight: 500;
+}
+.mg-portable .mg-chart-inline-heading {
+  font-size: 15px;
+  min-width: 154px;
+}
+.mg-portable .mg-chart-controls-inline {
+  gap: 6px;
+}
+.mg-portable .mg-chart-controls-inline .mg-seg {
+  border-radius: 6px;
+}
+.mg-portable .mg-chart-controls-inline .mg-seg button {
+  border-radius: 4px;
+}
+.mg-portable .portable-right > .mg-card:first-child .mg-card-title p {
+  font-size: 12px;
+  line-height: 1.5;
+}
+.mg-portable .portable-right h2 {
+  font-size: 16px;
+}
+@media (max-width: 1350px) {
+  .mg-portable .mg-chart-controls-inline {
+    gap: 4px;
+  }
+  .mg-portable .mg-chart-controls-inline .mg-chart-reading {
+    gap: 4px;
+    font-size: 12px;
+  }
+}

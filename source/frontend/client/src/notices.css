@@ -1,0 +1,199 @@
+/* Notice reading uses the page's normal scroll, without nested sidebars. */
+.main-dashboard[data-section="events"] .market-notices-page {
+  width: 100%;
+  min-width: 0;
+}
+.main-dashboard[data-section="events"] .market-notices-page > * {
+  min-width: 0;
+}
+.main-dashboard[data-section="events"] .notice-official-panel {
+  display: block;
+  min-width: 0;
+  overflow: visible;
+}
+.main-dashboard[data-section="events"] .notice-official-header {
+  padding: 1.25rem 1.5rem;
+}
+.main-dashboard[data-section="events"] .notice-source-scroll {
+  min-width: 0;
+}
+.main-dashboard[data-section="events"] .notice-source-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 10rem), 1fr));
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+}
+.main-dashboard[data-section="events"] .notice-source-panel {
+  min-width: 0;
+  padding: 0.75rem;
+}
+.main-dashboard[data-section="events"] .notice-source-panel > div:first-child {
+  flex-wrap: wrap;
+}
+.main-dashboard[data-section="events"] .notice-list-scroll {
+  min-width: 0;
+  max-height: none;
+  overflow: visible;
+}
+.main-dashboard[data-section="events"] .notice-list-row {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 0.75rem;
+  padding: 1.5rem;
+}
+.main-dashboard[data-section="events"] .notice-list-meta p {
+  font-size: var(--type-body) !important;
+  line-height: 1.6 !important;
+}
+.main-dashboard[data-section="events"] .notice-list-meta p:last-child {
+  display: flex;
+  flex-wrap: wrap;
+  column-gap: 1rem;
+}
+.main-dashboard[data-section="events"] .notice-list-title {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: keep-all;
+  font-size: var(--type-title);
+  line-height: 1.5 !important;
+}
+.main-dashboard[data-section="events"] .notice-list-state {
+  font-size: var(--type-body) !important;
+  line-height: 1.6 !important;
+}
+.main-dashboard[data-section="events"] .notice-list-article {
+  display: block;
+  min-width: 0;
+  padding: 1.5rem;
+  background: var(--inset);
+  font-size: var(--type-body);
+  line-height: 1.75;
+}
+.main-dashboard[data-section="events"] .notice-list-article > div {
+  max-width: 90ch;
+}
+.main-dashboard[data-section="events"] .notice-list-article p,
+.main-dashboard[data-section="events"] .notice-list-article summary,
+.main-dashboard[data-section="events"] .notice-list-article li {
+  /* The shared terminal theme marks muted prose as caption-sized. */
+  font-size: var(--type-body) !important;
+  line-height: 1.75 !important;
+  overflow-wrap: anywhere;
+}
+.main-dashboard[data-section="events"] .notice-list-article details {
+  border-radius: 0.5rem;
+}
+.main-dashboard[data-section="events"] .notice-list-article summary,
+.main-dashboard[data-section="events"] .notice-original-link {
+  min-height: 44px;
+  align-content: center;
+}
+.main-dashboard[data-section="events"] .notice-schedule-list > div {
+  grid-template-columns: minmax(0, 1fr);
+  padding: 1rem;
+}
+.main-dashboard[data-section="events"] .notice-schedule-list .truncate {
+  white-space: normal;
+  overflow: visible;
+}
+/* Stick to the scroller's bottom edge: with bottom 0 the next notice showed
+   through the content padding below the bar. */
+.main-dashboard[data-section="events"] .notice-pagination {
+  position: sticky;
+  bottom: calc(-1 * clamp(1rem, 2vw, 2rem));
+  z-index: 10;
+  gap: 1rem;
+  flex-wrap: wrap;
+  padding: 1rem 1.5rem;
+  background: var(--card);
+  font-size: var(--type-body);
+  box-shadow: 0 -6px 20px color-mix(in srgb, var(--background) 70%, transparent);
+}
+.main-dashboard[data-section="events"] .notice-pagination button {
+  min-width: 64px;
+  min-height: 44px;
+}
+.main-dashboard[data-section="events"] .hermes-notice-question {
+  min-width: 0;
+  padding: 1.25rem 1.5rem;
+}
+.main-dashboard[data-section="events"] .hermes-market-answer,
+.main-dashboard[data-section="events"] .hermes-market-question-error {
+  max-height: none;
+  overflow: visible;
+  overflow-wrap: anywhere;
+}
+.main-dashboard[data-section="events"] .notice-list-scroll:focus-visible,
+.main-dashboard[data-section="events"] .notice-source-scroll:focus-visible,
+.main-dashboard[data-section="events"] .hermes-notice-question:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
+}
+@media (min-width: 1024px) {
+  .main-dashboard[data-section="events"] .hermes-notice-question {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(20rem, 1fr);
+    gap: 0.75rem 1.5rem;
+  }
+  .main-dashboard[data-section="events"] .hermes-market-question-heading,
+  .main-dashboard[data-section="events"] .hermes-market-question-suggestions {
+    grid-column: 1;
+    min-width: 0;
+    margin: 0;
+  }
+  .main-dashboard[data-section="events"] .hermes-market-question-form {
+    grid-column: 2;
+    grid-row: 1 / span 2;
+    min-width: 0;
+    margin: 0;
+  }
+  .main-dashboard[data-section="events"] .hermes-market-answer,
+  .main-dashboard[data-section="events"] .hermes-market-question-error {
+    grid-column: 1 / -1;
+  }
+}
+@media (max-width: 767px) {
+  .main-dashboard[data-section="events"] .notice-official-header,
+  .main-dashboard[data-section="events"] .notice-list-row,
+  .main-dashboard[data-section="events"] .notice-list-article,
+  .main-dashboard[data-section="events"] .hermes-notice-question {
+    padding: 1rem;
+  }
+  .main-dashboard[data-section="events"] .notice-source-grid {
+    padding: 0.75rem 1rem;
+  }
+  .main-dashboard[data-section="events"] .notice-list-state {
+    flex-wrap: wrap;
+  }
+  .main-dashboard[data-section="events"] .notice-pagination {
+    bottom: calc(-1 * max(1.5rem, env(safe-area-inset-bottom, 0px)));
+    padding: 0.75rem 1rem calc(0.75rem + env(safe-area-inset-bottom, 0px));
+  }
+}
+
+/* The additional notice tab keeps the same archive and question contracts. */
+.main-dashboard[data-section="notice-llm"] .hermes-notice-question {
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 2rem);
+}
+.main-dashboard[data-section="notice-llm"] .hermes-market-question-form textarea {
+  min-height: 7rem;
+}
+.main-dashboard[data-section="notice-llm"] .hermes-market-answer {
+  min-height: 55dvh;
+  max-height: 75dvh;
+  overflow: auto;
+  overflow-wrap: anywhere;
+  overscroll-behavior: contain;
+}
+.main-dashboard[data-section="notice-llm"] .notice-list-title {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  font-size: var(--type-body);
+}
+@media (max-width: 767px) {
+  .main-dashboard[data-section="notice-llm"] .hermes-market-question-form {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .main-dashboard[data-section="notice-llm"] .hermes-market-question-form button {
+    min-height: 44px;
+  }
+}

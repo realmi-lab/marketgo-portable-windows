@@ -1,0 +1,920 @@
+/* Main dashboard only. Unix imports index.css directly, never this stylesheet.
+   Keep desktop geometry and server-owned values unchanged. */
+@media (max-width: 767px) {
+  .main-dashboard {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+  }
+
+  .main-dashboard .dashboard-content {
+    min-height: 0;
+    padding: 1rem 0.75rem max(1.5rem, env(safe-area-inset-bottom, 0px));
+    scrollbar-gutter: auto;
+    scroll-padding-block: 1rem;
+  }
+
+  .main-dashboard .dashboard-page {
+    max-width: 100%;
+  }
+
+  .main-dashboard .summary-momentum-heading {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 0.5rem 0.75rem;
+  }
+
+  .main-dashboard .summary-momentum-heading > strong {
+    white-space: nowrap;
+  }
+
+  .main-dashboard .summary-momentum-heading > strong:first-child {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .main-dashboard .summary-momentum-heading > strong:last-child {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .main-dashboard .summary-momentum-heading > .summary-status {
+    grid-row: 2;
+    grid-column: 1 / -1;
+    justify-self: start;
+    max-width: 100%;
+    white-space: normal;
+    word-break: keep-all;
+  }
+
+  .main-dashboard .summary-momentum-speed {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+    word-break: keep-all;
+  }
+
+  .main-dashboard .dashboard-page > .space-y-6 > :not(:last-child) {
+    margin-block-end: 1.25rem;
+  }
+
+  .main-dashboard .app-topbar {
+    padding-block: 0.5rem;
+  }
+
+  .main-dashboard .app-topbar-identity {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.25rem;
+  }
+
+  .main-dashboard .app-mobile-context {
+    min-height: 0;
+    gap: 0.5rem;
+    padding: 0;
+  }
+
+  .main-dashboard .app-mobile-context > span {
+    font-size: var(--type-caption);
+    line-height: 1.25rem;
+  }
+
+  .main-dashboard .app-mobile-section-title {
+    font-size: var(--type-body);
+    line-height: 1.5rem;
+    word-break: keep-all;
+  }
+
+  .main-dashboard .mobile-navigation {
+    padding-block: 0.25rem;
+    scrollbar-width: none;
+    overscroll-behavior-x: contain;
+    scroll-padding-inline: 0.75rem;
+    scroll-snap-type: x proximity;
+  }
+
+  .main-dashboard .mobile-navigation-item {
+    border-radius: var(--radius-control);
+    scroll-snap-align: center;
+  }
+
+  .main-dashboard .mobile-navigation-label {
+    font-size: var(--type-body) !important;
+    line-height: 1.5rem !important;
+  }
+
+  .main-dashboard :is(button, select, input:not([type="checkbox"]), summary) {
+    min-height: 2.75rem;
+    touch-action: manipulation;
+  }
+
+  .main-dashboard button {
+    min-inline-size: 2.75rem;
+  }
+
+  .main-dashboard :is(input, select, textarea) {
+    min-width: 0;
+    max-width: 100%;
+    font-size: var(--type-body) !important;
+    line-height: 1.5rem;
+  }
+
+  .main-dashboard .icon-button {
+    min-width: 2.75rem;
+  }
+
+  .main-dashboard .inline-help {
+    width: 2.75rem;
+    height: 2.75rem;
+    flex-basis: 2.75rem;
+    margin-block: -0.5rem;
+  }
+
+  .main-dashboard .inline-help svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  .main-dashboard .page-header {
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .main-dashboard .mobile-description-copy {
+    display: none;
+  }
+
+  .main-dashboard .mobile-help-heading {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 0.25rem;
+  }
+
+  .main-dashboard .mobile-help-heading > :first-child {
+    min-width: 0;
+  }
+
+  .main-dashboard .mobile-help-trigger {
+    display: inline-flex;
+  }
+
+  .main-dashboard .page-header-heading {
+    width: 100%;
+  }
+
+  .main-dashboard .page-header-actions {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .main-dashboard .page-header h2 {
+    font-size: var(--type-title) !important;
+    line-height: 2rem !important;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .instrument-panel-header {
+    gap: 0.75rem;
+    padding: 1rem;
+  }
+
+  .main-dashboard :is(.panel-heading, .panel-actions) {
+    max-width: 100%;
+  }
+
+  .main-dashboard
+    :is(
+      .instrument-panel-header h2,
+      .instrument-panel-header h3,
+      .official-analysis-chapter h2
+    ) {
+    /* Section titles stay above card titles (h3, subtitle step). */
+    font-size: var(--type-subtitle) !important;
+    line-height: 1.625rem !important;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .context-toolbar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .context-toolbar .segmented-control {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  .main-dashboard .context-toolbar .segmented-control-item {
+    flex: 1 0 auto;
+    padding-inline: 0.75rem;
+    font-size: var(--type-body);
+    white-space: nowrap;
+  }
+
+  .main-dashboard .market-share-dashboard-modes .segmented-control-item {
+    min-height: 3.5rem !important;
+    padding: 0.5rem;
+    font-size: var(--type-body);
+    line-height: 1.25rem;
+    text-wrap: balance;
+    word-break: keep-all;
+  }
+
+  .main-dashboard .market-share-dashboard-modes .lucide {
+    display: none;
+  }
+
+  /* Four short metrics fit two columns; do not consume four phone screens
+     before the selected route's actual analysis starts. */
+  .main-dashboard section[aria-label="선택 거래소 관점"] > .grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .main-dashboard section[aria-label="선택 거래소 관점"] > .grid > div {
+    min-width: 0;
+    border: 0;
+    padding: 1rem;
+  }
+
+  .main-dashboard
+    section[aria-label="선택 거래소 관점"]
+    > .grid
+    > div:nth-child(odd) {
+    border-right: 1px solid var(--border);
+  }
+
+  .main-dashboard
+    section[aria-label="선택 거래소 관점"]
+    > .grid
+    > div:nth-child(n + 3) {
+    border-top: 1px solid var(--border);
+  }
+
+  .main-dashboard section[aria-label="선택 거래소 관점"] > .grid > div > div {
+    min-height: 2.5rem;
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .main-dashboard section[aria-label="선택 거래소 관점"] strong {
+    font-size: var(--type-title);
+    line-height: 2rem;
+    white-space: nowrap;
+  }
+
+  .main-dashboard .metric-panel {
+    height: auto;
+    min-height: 7.5rem;
+    padding: 1rem;
+  }
+
+  .main-dashboard .metric-panel > .stat-value {
+    font-size: var(--type-title);
+    line-height: 2rem;
+  }
+
+  .main-dashboard .metric-panel-detail {
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .metric-panel-label {
+    word-break: keep-all;
+  }
+
+  /* The selected-window comparison contains a second grid inside its right
+     card. Stack both levels on phones so its fixed-width desktop total cannot
+     squeeze the contribution labels and amounts into overlapping columns. */
+  .main-dashboard .summary-headline-effects,
+  .main-dashboard .summary-headline-effect-decomposition {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .main-dashboard .summary-headline-effect {
+    padding: 1rem;
+  }
+
+  .main-dashboard .summary-headline-effect > span,
+  .main-dashboard .summary-headline-effect-operands > span,
+  .main-dashboard .summary-headline-effect-nested > span,
+  .main-dashboard .summary-headline-effect-total-inline > span,
+  .main-dashboard .summary-headline-share-card > small,
+  .main-dashboard .summary-headline-share-change,
+  .main-dashboard .summary-headline-effect-volume-inline {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .summary-headline-effect-operands > strong,
+  .main-dashboard .summary-headline-effect-nested > strong {
+    display: flex;
+    min-width: 0;
+    flex-direction: column;
+    gap: 0.125rem;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .summary-headline-effect-total-inline {
+    align-items: flex-start;
+    border-top: 1px solid var(--border);
+    border-left: 0;
+    padding-top: 0.75rem;
+    padding-left: 0;
+    text-align: left;
+  }
+
+  .main-dashboard .live-exchange-chart-plot {
+    padding: 12px 8px 8px;
+  }
+
+  .main-dashboard .animated-metric-value {
+    max-inline-size: 100%;
+  }
+
+  /* Constrain the inline wrapper too: a reserved ch width must not enlarge
+     a narrow card even when the visible number already fits. */
+  .main-dashboard .stat-value > .metric-value-settle {
+    max-inline-size: 100%;
+  }
+
+  /* Official current value comes before the prose on a phone, then the
+     conclusion, then the two smaller cards; below all three cards the
+     conclusion fell out of the first screen. Keep every source qualifier and
+     coverage warning, with no recalculation or hiding. The chapter number is
+     decoration and gives its width to the title. */
+  .main-dashboard .official-analysis-chapter {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+    margin-top: 1.25rem;
+  }
+
+  .main-dashboard .official-analysis-chapter > span {
+    display: none;
+  }
+
+  .main-dashboard .official-change-overview {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .official-change-primary-metrics {
+    display: contents;
+  }
+
+  .main-dashboard .official-change-answer {
+    grid-column: 1 / -1;
+    order: -1;
+  }
+
+  .main-dashboard .official-change-primary-metrics > :first-child {
+    order: -2;
+    grid-column: 1 / -1;
+  }
+
+  .main-dashboard
+    .official-change-primary-metrics
+    > .official-summary-card-slot {
+    display: block;
+    min-width: 0;
+  }
+
+  .main-dashboard .official-change-primary-metrics .metric-panel {
+    min-height: 7.25rem;
+  }
+
+  .main-dashboard.terminal-shell .official-change-detail-metrics {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main-dashboard .official-summary-card-share .stat-value {
+    font-size: var(--type-display);
+    line-height: 2.5rem;
+  }
+
+  .main-dashboard .official-change-answer {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .main-dashboard .official-change-answer .official-summary-copy {
+    font-size: var(--type-body);
+    line-height: 1.65;
+    font-weight: 500;
+    letter-spacing: -0.015em;
+  }
+
+  .main-dashboard .official-change-answer .official-summary-copy strong {
+    font-size: var(--type-body);
+    white-space: nowrap;
+  }
+
+  .main-dashboard .official-selected-hour-story {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .main-dashboard
+    :is(
+      .official-selected-hour-heading h3,
+      .official-contribution-rank-header h3
+    ) {
+    font-size: var(--type-body);
+    line-height: 1.5rem;
+  }
+
+  .main-dashboard .official-selected-hour-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.5rem;
+  }
+
+  /* The answer and the share pair take full rows; the two amounts share
+     the last row, so no tile is left alone. */
+  .main-dashboard .official-selected-hour-metrics > :nth-child(-n + 2) {
+    grid-column: 1 / -1;
+  }
+
+  .main-dashboard .official-selected-hour-metrics > div {
+    padding: 0.75rem;
+  }
+
+  .main-dashboard .official-selected-hour-metrics strong {
+    overflow: visible;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  /* Phones show five rows until expanded; the desktop height would leave a gap. */
+  .main-dashboard .official-contribution-rank {
+    min-height: 0;
+  }
+
+  .main-dashboard .official-contribution-rank-header {
+    min-height: 0;
+    padding: 1rem;
+  }
+
+  .main-dashboard .official-contribution-rank-list li {
+    grid-template-columns: 1.5rem 4rem minmax(0, 1fr) auto;
+    column-gap: 0.5rem;
+  }
+
+  .main-dashboard .official-contribution-rank-list small {
+    white-space: normal;
+    line-height: 1.25rem;
+  }
+
+  /* Market analysis is a reading flow, not a desktop hero squeezed down. */
+  .main-dashboard .mi-hero-grid {
+    padding: 1rem;
+    gap: 1rem;
+  }
+
+  .main-dashboard :is(.mi-hero-title, .mi-section-title) {
+    font-size: var(--type-title);
+    line-height: 2rem;
+  }
+
+  .main-dashboard .mi-hero-metrics .mi-metric-value {
+    font-size: var(--type-title);
+    line-height: 2rem;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .mi-chapter {
+    padding-block: 1.25rem;
+  }
+
+  .main-dashboard .mi-chapter.mi-overview-chapter {
+    padding-block: 0;
+  }
+
+  .main-dashboard .realtime-flow-detail-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main-dashboard .realtime-flow-detail-grid > div {
+    min-width: 0;
+  }
+
+  .main-dashboard .realtime-flow-driver-card-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* An odd last card takes the whole row instead of leaving a hole. */
+  .main-dashboard .realtime-flow-driver-card-list > :last-child:nth-child(odd) {
+    grid-column: 1 / -1;
+  }
+
+  .main-dashboard .realtime-flow-driver-card {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 0.25rem;
+    padding: 0.75rem;
+  }
+
+  .main-dashboard .realtime-flow-driver-card > span {
+    margin-left: 0;
+  }
+
+  /* Inputs remain 16px to avoid mobile Safari's focus zoom. */
+  .main-dashboard .hermes-market-question-form {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0.75rem;
+  }
+
+  .main-dashboard .hermes-market-question-form > button {
+    width: 100%;
+    min-height: 3rem;
+  }
+
+  .main-dashboard .hermes-market-question-form textarea {
+    min-height: 7.5rem;
+    padding: 1rem;
+  }
+
+  .main-dashboard .hermes-market-question-suggestions {
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .hermes-market-question-suggestions button {
+    max-width: 100%;
+    white-space: normal;
+    text-align: left;
+    line-height: 1.5;
+  }
+
+  .main-dashboard .market-share-llm-page {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+
+  .main-dashboard .market-share-llm-page > * {
+    margin-block: 0 !important;
+  }
+
+  .main-dashboard .share-llm-scope-grid {
+    order: 1;
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .share-llm-scope-grid article {
+    padding: 0.75rem;
+  }
+
+  .main-dashboard
+    :is(.share-llm-scope-grid h3, .hermes-market-question-heading h3) {
+    font-size: var(--type-body);
+    line-height: 1.5rem;
+  }
+
+  .main-dashboard .hermes-market-question-heading .flex {
+    flex-wrap: wrap;
+  }
+
+  .main-dashboard .slippage-order-copy > strong {
+    font-size: var(--type-title);
+    line-height: 2rem;
+  }
+
+  .main-dashboard .slippage-asset-toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .main-dashboard .slippage-asset-toolbar > label {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .main-dashboard .slippage-direction-grid {
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .slippage-direction-grid > div {
+    padding: 0.75rem;
+  }
+
+  /* Wide evidence stays complete in its own scroller, never under a global
+     overflow:hidden mask. Only the compact official table pins its first column;
+     a wide identity column must not obscure long statuses or timestamps. */
+  .main-dashboard
+    :is(
+      .overflow-auto,
+      .overflow-x-auto,
+      .market-table-scroll,
+      .official-exchange-table-scroll
+    ):has(> table) {
+    max-width: 100%;
+    overflow-x: auto !important;
+    overscroll-behavior-x: contain;
+    scrollbar-width: thin;
+    scroll-padding-inline: 0.75rem;
+  }
+
+  .main-dashboard
+    :is(
+      .overflow-auto,
+      .overflow-x-auto,
+      .market-table-scroll,
+      .official-exchange-table-scroll
+    ):has(> table)::before {
+    content: "표를 좌우로 밀어 나머지 항목을 확인하세요";
+    position: sticky;
+    left: 0;
+    display: block;
+    width: fit-content;
+    max-width: 100%;
+    padding: 0.75rem 0.75rem;
+    color: var(--muted-foreground);
+    font-size: var(--type-caption);
+    line-height: 1.25rem;
+  }
+
+  .main-dashboard :is(.market-data-table, .data-table) :is(th, td) {
+    padding: 0.75rem;
+  }
+
+  .main-dashboard .official-exchange-table tr > :first-child:not([colspan]) {
+    position: sticky;
+    left: 0;
+    z-index: 2;
+    background: var(--card);
+    box-shadow: 1px 0 0 var(--border);
+  }
+
+  .main-dashboard
+    .official-exchange-table
+    thead
+    tr
+    > :first-child:not([colspan]) {
+    z-index: 3;
+  }
+
+  .main-dashboard .market-data-table-sticky-first :is(th, td):first-child {
+    position: static;
+    box-shadow: none;
+  }
+
+  .main-dashboard.terminal-shell
+    .official-exchange-table-panel
+    .official-exchange-table-scroll
+    > .official-exchange-table {
+    inline-size: max-content !important;
+    width: max-content !important;
+    min-width: 100% !important;
+    table-layout: auto;
+  }
+}
+
+/* Phone reading layout: let content determine height, with full numeric values. */
+@media (max-width: 767px) {
+  .main-dashboard .app-topbar-primary {
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .app-mobile-context {
+    flex-shrink: 1;
+    flex-wrap: wrap;
+    row-gap: 0;
+  }
+
+  .main-dashboard .mobile-navigation {
+    gap: 0.25rem;
+    padding-block: 0.5rem;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .main-dashboard .mobile-navigation-item {
+    gap: 0.5rem;
+    padding-inline: 0.75rem;
+  }
+
+  .main-dashboard .mobile-navigation-item[aria-current="page"] {
+    box-shadow: inset 0 -2px var(--primary);
+  }
+
+  .main-dashboard .metric-panel-header {
+    align-items: flex-start;
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .metric-panel-icon {
+    width: 1.25rem;
+    height: 1.25rem;
+    background: transparent;
+  }
+
+  .main-dashboard :is(.metric-panel-label, .metric-panel-detail) {
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .official-analysis-chapter {
+    align-items: start;
+  }
+
+  .main-dashboard section[aria-label="선택 거래소 관점"] {
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+  }
+
+  .main-dashboard .official-contribution-rank-header {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .official-contribution-rank-header > div {
+    width: 100%;
+    min-width: 0;
+  }
+
+  .main-dashboard .market-table-footer {
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    line-height: 1.5;
+    word-break: keep-all;
+  }
+
+  .main-dashboard .official-contribution-rank-list li {
+    grid-template-columns: 1.5rem minmax(0, 1fr) auto;
+    gap: 0.5rem 0.5rem;
+    padding: 0.75rem;
+  }
+
+  .main-dashboard .official-contribution-rank-list strong,
+  .main-dashboard .official-contribution-rank-list small,
+  .main-dashboard .realtime-flow-episode-drivers {
+    overflow: visible;
+    text-overflow: clip;
+    white-space: normal;
+    word-break: keep-all;
+    overflow-wrap: anywhere;
+    line-height: 1.5;
+  }
+
+  .main-dashboard .official-contribution-rank-bar {
+    grid-column: 2 / -1;
+    grid-row: 2;
+  }
+
+  .main-dashboard .official-contribution-rank-list li > span:nth-last-of-type(1) {
+    grid-column: 3;
+    grid-row: 1;
+  }
+
+  .main-dashboard .realtime-flow-episode-item > span:first-child {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+  }
+
+  /* All filters are reachable without hunting through a narrow horizontal strip. */
+  .main-dashboard .domestic-index .di-index-filters {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 0.75rem;
+    overflow: visible;
+    padding: 0.75rem;
+    margin-inline: 1rem;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters > label {
+    min-width: 0;
+    font-size: var(--type-caption);
+    line-height: 1.5;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters > label:nth-child(4),
+  .main-dashboard .domestic-index .di-index-filters > button,
+  .main-dashboard .domestic-index .di-index-filters > span,
+  .main-dashboard .domestic-index .di-index-filters > small {
+    grid-column: 1 / -1;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters > span {
+    display: block;
+    justify-self: start;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters select {
+    max-width: 100%;
+    padding-inline: 0.5rem;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters > .di-table-tools {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 2.75rem 2.75rem;
+    gap: 0.5rem;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters .di-search {
+    grid-column: 1 / -1;
+    width: 100%;
+    min-width: 0;
+    max-width: none;
+    height: auto;
+    min-height: 3rem;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters .di-search input {
+    height: 2.75rem;
+    min-height: 2.75rem;
+  }
+
+  .main-dashboard .domestic-index .di-index-filters .di-table-tools > button[aria-label] {
+    width: 2.75rem;
+    min-width: 2.75rem;
+  }
+
+  .main-dashboard .domestic-index .di-stacked-venue h3 {
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    white-space: normal;
+  }
+
+  .main-dashboard .domestic-index .di-card p {
+    font-size: var(--type-title);
+    letter-spacing: -0.025em;
+  }
+
+  .main-dashboard .domestic-index .di-card small {
+    display: block;
+    overflow-wrap: anywhere;
+    font-size: var(--type-caption);
+    line-height: 1.5;
+  }
+}
+
+/* Phones show the short tab names so each fits on one line; the button keeps
+   the full name as its accessible name. */
+@media (max-width: 767px) {
+  .main-dashboard
+    .segmented-control-item:has(.segmented-control-short-label)
+    .segmented-control-label {
+    display: none;
+  }
+
+  .main-dashboard .segmented-control-short-label {
+    display: inline;
+    white-space: nowrap;
+  }
+}
+
+/* Notice titles in the final report were 24px tall tap targets on phones.
+   Padding widens the tap area to 44px; the negative margin keeps the layout. */
+@media (max-width: 767px) {
+  .main-dashboard .final-report-notice-heading a {
+    padding-block: 0.75rem;
+    margin-block: -0.5rem -0.75rem;
+  }
+}
+
+/* The explanation card's icon column took about a tenth of a phone's width
+   next to a long paragraph; on phones the card is text only, with an accent
+   edge in place of the column. */
+@media (max-width: 767px) {
+  .main-dashboard .market-brief-strip {
+    grid-template-columns: minmax(0, 1fr);
+    border-left: 3px solid color-mix(in oklab, var(--primary) 55%, var(--border));
+  }
+
+  .main-dashboard .market-brief-icon {
+    display: none;
+  }
+}
+
+/* The summary's notice list scrolled inside the page scroll on phones; it now
+   grows with the page and each exchange shows five notices until expanded. */
+@media (max-width: 767px) {
+  .main-dashboard .notice-evidence-list {
+    max-height: none;
+    overflow: visible;
+  }
+}
+
+/* Notice titles at the 24px title step fitted about two notices per phone
+   screen; phones read them at the subtitle step. */
+@media (max-width: 767px) {
+  .main-dashboard[data-section="events"] .notice-list-title.ui-title {
+    font-size: var(--type-subtitle) !important;
+    line-height: 1.5 !important;
+  }
+}
+
+/* Matches the phone .dashboard-content top padding (1rem). */
+@media (max-width: 767px) {
+  .main-dashboard .summary-chapter-nav {
+    top: -1rem;
+  }
+}

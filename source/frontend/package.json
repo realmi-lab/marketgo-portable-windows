@@ -1,0 +1,44 @@
+{
+  "name": "marketgo-portable-ui",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite --host",
+    "build": "vite build",
+    "preview": "vite preview --host",
+    "check": "tsc --noEmit",
+    "format": "prettier --write .",
+    "test": "node --test client/src/lib/chart-interaction.test.ts client/src/lib/flow-chart-time-axis.test.ts client/src/lib/portable-share-history.test.ts client/src/lib/coin-table-query.test.ts client/src/lib/index-refresh.test.ts client/src/lib/index-day.test.ts"
+  },
+  "dependencies": {
+    "graphology": "^0.26.0",
+    "graphology-layout-forceatlas2": "^0.10.1",
+    "lucide-react": "^1.23.0",
+    "pretendard": "^1.3.9",
+    "react": "^19.2.7",
+    "react-dom": "^19.2.7",
+    "react-markdown": "^10.1.0",
+    "recharts": "^3.9.2",
+    "remark-gfm": "^4.0.1",
+    "sigma": "^3.0.3"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.62.1",
+    "@tailwindcss/vite": "^4.3.2",
+    "@types/node": "^26.1.0",
+    "@types/react": "^19.2.17",
+    "@types/react-dom": "^19.2.3",
+    "@vitejs/plugin-react": "^6.0.3",
+    "prettier": "^3.9.4",
+    "tailwindcss": "^4.3.2",
+    "typescript": "6.0.3",
+    "vite": "^8.1.3"
+  },
+  "optionalDependencies": {
+    "@rolldown/binding-linux-x64-gnu": "1.1.4",
+    "@tailwindcss/oxide-linux-x64-gnu": "4.3.2",
+    "lightningcss-linux-x64-gnu": "1.32.0"
+  },
+  "packageManager": "pnpm@11.10.0"
+}

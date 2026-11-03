@@ -1,0 +1,549 @@
+/* Main dashboard refresh. Index2 keeps its own terminal content theme, but
+   its app shell (sidebar, top bar, phone navigation) uses the same colors as
+   every other screen instead of turning near-black on that one route. */
+/* Surface steps: page, card, inset, secondary. Cards were 1.09:1 against the
+   page and their borders 1.18:1, so edges faded out; now 1.13:1 and 1.27:1.
+   Inset and well are fixed colors, not opacity mixes, so a panel looks the
+   same whatever it sits on. */
+.main-dashboard:not([data-section="index2"]),
+.main-dashboard[data-section="index2"]
+  :is(.app-sidebar, .app-topbar, .mobile-navigation) {
+  --background: #eef1f6;
+  --foreground: #202b3a;
+  --card: #ffffff;
+  --card-foreground: #202b3a;
+  --surface-inset: #f4f7fa;
+  --surface-well: #f4f7fa;
+  --secondary: #e9eef5;
+  --muted: #e3e9f1;
+  --muted-foreground: #536073;
+  --border: #d0d8e4;
+  --input: #c3cfdd;
+  --sidebar: #fbfcfe;
+  --sidebar-border: #d0d8e4;
+  --accent: #e6ecf4;
+  --radius-card: 0.875rem;
+  --radius-panel: 1rem;
+  --glass-shadow: 0 2px 8px rgb(27 42 65 / 3%);
+}
+
+/* Darker steps (2026-09-30 request): the page and cards read as navy-grey.
+   Card luminance is 40% lower; separation stays with the borders (1.6:1 to
+   the page, 1.4:1 to the card), inset 1.07:1 and secondary 1.13:1 to the card. */
+.dark .main-dashboard:not([data-section="index2"]),
+.dark
+  .main-dashboard[data-section="index2"]
+  :is(.app-sidebar, .app-topbar, .mobile-navigation) {
+  --background: #05080d;
+  --foreground: #e7edf5;
+  --card: #121a24;
+  --card-foreground: #e7edf5;
+  --surface-inset: #162030;
+  --surface-well: #0c1119;
+  --secondary: #1b2533;
+  --muted: #1d2836;
+  --muted-foreground: #9ba9bc;
+  --border: #2a3546;
+  --input: #334157;
+  --sidebar: #080c12;
+  --sidebar-border: #1f2837;
+  --accent: #202b3a;
+  --glass-shadow: 0 2px 8px rgb(0 0 0 / 8%);
+}
+
+@scope (.main-dashboard:not([data-section="index2"])) {
+  :scope .app-sidebar {
+    padding-block: 1.5rem;
+  }
+
+  :scope .app-sidebar-heading {
+    padding-bottom: 1.5rem;
+    margin-bottom: 1rem;
+  }
+
+  :scope .app-sidebar-copy strong {
+    letter-spacing: -0.025em;
+    font-weight: 700;
+  }
+
+  :scope .app-sidebar nav {
+    gap: 0.5rem;
+  }
+
+  :scope .app-nav-item {
+    min-height: 3rem;
+    border: 1px solid transparent;
+    border-radius: 0.625rem;
+    gap: 0.75rem;
+  }
+
+  :scope .app-nav-item[aria-current="page"] {
+    border-color: color-mix(in srgb, var(--primary) 28%, var(--border));
+    background: color-mix(in srgb, var(--primary) 10%, var(--sidebar));
+    box-shadow: inset 3px 0 var(--primary);
+  }
+
+  :scope .app-nav-item[aria-current="page"] > span[aria-hidden="true"] {
+    display: none;
+  }
+
+  :scope .app-nav-item svg {
+    width: 1.125rem;
+    height: 1.125rem;
+  }
+
+  :scope .app-topbar {
+    background: var(--sidebar);
+    padding-block: 0.75rem;
+    box-shadow: none;
+    backdrop-filter: none;
+  }
+
+  :scope .app-desktop-section-title {
+    border: 0;
+    padding: 0;
+    margin: 0;
+    font-size: var(--type-body);
+    letter-spacing: -0.02em;
+  }
+
+  :scope .app-live-status,
+  :scope .app-question-status {
+    border-radius: 0.5rem;
+    font-size: var(--type-caption);
+  }
+
+  :scope .app-theme-toggle {
+    border-radius: 0.625rem;
+    background: var(--card);
+    box-shadow: none;
+  }
+
+  :scope .dashboard-content {
+    background: var(--background);
+  }
+
+  :scope .page-header {
+    padding-block: 0.25rem 1rem;
+    border-bottom: 1px solid var(--border);
+    row-gap: 1rem;
+  }
+
+  :scope .page-header h2 {
+    font-weight: 700;
+    letter-spacing: -0.035em;
+  }
+
+  :scope .glass-card {
+    background: var(--card);
+    border-color: var(--border);
+    box-shadow: var(--glass-shadow);
+    backdrop-filter: none;
+  }
+
+  :scope .instrument-panel-header {
+    padding: 1rem 1.25rem;
+    background: transparent;
+    border-color: var(--border);
+  }
+
+  :scope .instrument-panel-header h3 {
+    font-size: var(--type-body);
+    line-height: 1.5;
+    font-weight: 700;
+    letter-spacing: -0.025em;
+  }
+
+  :scope .metric-panel {
+    padding: 1rem 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--card);
+    box-shadow: none;
+  }
+
+  :scope .metric-panel::before {
+    height: 2px;
+  }
+
+  :scope .metric-panel-label {
+    color: var(--muted-foreground);
+    line-height: 1.5;
+  }
+
+  :scope .metric-panel .stat-value {
+    margin-top: 0.75rem;
+    letter-spacing: -0.035em;
+    font-variant-numeric: tabular-nums;
+  }
+
+  :scope .metric-panel-icon {
+    border: 0;
+    box-shadow: none;
+    background: var(--secondary);
+    border-radius: 0.5rem;
+  }
+
+  :scope .segmented-control {
+    padding: 0.25rem;
+    border-radius: 0.625rem;
+    background: var(--background);
+    box-shadow: none;
+    gap: 0.25rem;
+  }
+
+  :scope .segmented-control-item {
+    border-radius: 0.375rem;
+    min-height: 2.75rem;
+  }
+
+  :scope .segmented-control-item-active {
+    border-color: var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    box-shadow: 0 1px 3px rgb(0 0 0 / 8%);
+  }
+
+  :scope .official-analysis-chapter {
+    gap: 1rem;
+  }
+
+  :scope .official-analysis-chapter > span {
+    width: 2.75rem;
+    height: 2.75rem;
+    border-radius: 0.75rem;
+    background: var(--secondary);
+    border-color: var(--border);
+    box-shadow: none;
+  }
+
+  :scope .official-summary-statement,
+  :scope .official-summary-statement-light {
+    background: color-mix(in srgb, var(--primary) 4%, var(--card));
+    box-shadow: none;
+  }
+
+  :scope :is(.data-table, .market-data-table, .official-trend-table) thead th {
+    background: var(--secondary);
+    color: var(--muted-foreground);
+    font-weight: 600;
+  }
+
+  :scope :is(.data-table, .market-data-table, .official-trend-table) tbody tr:hover {
+    background: var(--accent);
+  }
+
+  :scope .mi-experience .mi-hero {
+    min-height: 0;
+    margin-top: 1.25rem;
+    border-radius: 1rem;
+    border-color: var(--border);
+    background: var(--card);
+    color: var(--foreground);
+    box-shadow: var(--glass-shadow);
+  }
+
+  :scope .mi-hero::after {
+    border: 0;
+  }
+
+  :scope .mi-hero-title,
+  :scope .mi-live-status {
+    color: var(--foreground);
+  }
+
+  :scope .mi-hero-status-row,
+  :scope .mi-hero-copy p {
+    color: var(--muted-foreground);
+  }
+
+  :scope .mi-hero-eyebrow {
+    color: var(--muted-foreground) !important;
+  }
+
+  :scope .mi-hero-actions button {
+    border-radius: 0.625rem;
+    border-color: var(--border);
+    background: var(--secondary);
+    color: var(--foreground);
+  }
+
+  :scope .mi-hero-actions .is-primary {
+    background: var(--primary);
+    color: var(--primary-foreground);
+  }
+
+  :scope .mi-hero-actions button:hover {
+    background: var(--accent);
+    color: var(--foreground);
+  }
+
+  :scope .mi-hero-actions button:focus-visible {
+    outline-color: var(--ring);
+  }
+
+  :scope .mi-experience .mi-hero .mi-metric-featured {
+    background: var(--background);
+    border-color: var(--border);
+    border-radius: 0.75rem;
+    box-shadow: none;
+    color: var(--foreground);
+  }
+
+  :scope .mi-experience .mi-hero .mi-metric-featured .mi-metric-value {
+    color: var(--primary);
+  }
+
+  :scope .mi-hero-metrics {
+    background: var(--background);
+    border-color: var(--border);
+  }
+
+  :scope .mi-experience .mi-hero .mi-hero-metrics .mi-metric-card,
+  :scope .mi-hero-metrics .mi-metric-value {
+    color: var(--foreground);
+    border-color: var(--border);
+  }
+
+  :scope .mi-experience .mi-hero .mi-metric-featured .text-muted-foreground,
+  :scope .mi-hero-metrics .text-muted-foreground {
+    color: var(--muted-foreground);
+  }
+
+  :scope .mi-hero-metrics .text-profit {
+    color: var(--profit);
+  }
+
+  :scope .mi-hero-metrics .text-loss {
+    color: var(--loss);
+  }
+
+  :scope .mi-hero-metrics .text-gold {
+    color: var(--gold);
+  }
+
+  /* Index keeps all columns, values, sorting and source/status copy. */
+  :scope .domestic-index {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    box-shadow: var(--glass-shadow);
+  }
+
+  :scope .domestic-index .di-heading {
+    padding: 1.25rem 1.5rem;
+    border-color: var(--border);
+  }
+
+  :scope .domestic-index .di-heading h2 {
+    gap: 0.75rem;
+    font-size: var(--type-title);
+  }
+
+  :scope .domestic-index .di-heading > strong {
+    color: var(--muted-foreground);
+    border: 1px solid var(--border);
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.75rem;
+    font-size: var(--type-caption);
+  }
+
+  :scope .domestic-index .di-card {
+    min-height: 9.5rem;
+    padding: 1.25rem;
+    border-radius: 0.75rem;
+    background: var(--background);
+    box-shadow: none;
+  }
+
+  :scope .domestic-index .di-card.di-bithumb {
+    border-top: 3px solid var(--exchange-bithumb);
+  }
+
+  :scope .domestic-index .di-card.di-upbit {
+    border-top: 3px solid var(--exchange-upbit);
+  }
+
+  :scope .domestic-index .di-card.di-combined {
+    border-top: 3px solid var(--primary);
+  }
+
+  :scope .domestic-index .di-card.di-stacked {
+    padding: 0.5rem 1rem;
+  }
+
+  :scope .domestic-index .di-index-filters {
+    padding: 1rem;
+    border: 1px solid var(--border);
+    border-radius: 0.75rem;
+    background: var(--background);
+    gap: 0.5rem;
+  }
+
+  :scope .domestic-index .di-index-filters .di-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  :scope .domestic-index .di-index-filters .di-search input {
+    width: 100%;
+    min-width: 0;
+  }
+
+  :scope .domestic-index .di-index-filters .di-search svg {
+    flex-shrink: 0;
+  }
+
+  :scope .domestic-index .di-table-tools > button[aria-label] {
+    min-width: 2.75rem;
+    width: 2.75rem;
+  }
+
+  :scope .domestic-index .di-table-scroll {
+    border-radius: 0.75rem;
+  }
+
+  :scope .domestic-index .di-table-scroll tbody td {
+    border-right-color: transparent;
+  }
+
+  :scope .domestic-index .di-table-scroll tbody tr:nth-child(even):not(.di-total) td {
+    background: var(--surface-inset);
+  }
+
+  :scope .domestic-index .di-table-scroll tbody tr:hover td {
+    background: var(--accent);
+  }
+
+  @media (max-width: 767px) {
+    :scope .app-topbar {
+      padding: 0.75rem 0.75rem;
+    }
+
+    :scope .mobile-navigation {
+      background: var(--sidebar);
+      gap: 0.5rem;
+    }
+
+    :scope .mobile-navigation-item {
+      border-radius: 0.5rem;
+    }
+
+    :scope .dashboard-content {
+      padding-inline: 0.75rem;
+    }
+
+    :scope .instrument-panel-header {
+      padding: 1rem;
+    }
+
+    :scope .metric-panel {
+      padding: 1rem;
+    }
+
+    :scope .domestic-index .di-heading {
+      padding: 1rem;
+    }
+
+    :scope .domestic-index .di-heading h2 {
+      flex-wrap: wrap;
+      font-size: var(--type-body);
+    }
+
+    :scope .domestic-index .di-card {
+      min-height: 9rem;
+      padding: 1rem;
+    }
+
+    :scope .domestic-index .di-index-filters {
+      margin-inline: 1rem;
+    }
+
+    :scope .domestic-index .di-index-filters > label {
+      min-width: 8rem;
+    }
+
+    :scope .domestic-index .di-index-filters select,
+    :scope .domestic-index .di-index-filters .di-search input {
+      font-size: var(--type-body);
+    }
+  }
+}
+
+/* Four leader cards share one row; a 24px section-title size wrapped "TOP 5"
+   onto its own line. The card title uses the body size instead. */
+.main-dashboard .contribution-leader-title {
+  font-size: var(--type-body);
+  line-height: 1.4;
+}
+
+/* Coins of the leading listing structure, as a table: one row per coin with
+   amounts before → after and the change underneath. */
+.market-brief-coins-scroll {
+  margin-top: 0.5rem;
+  overflow-x: auto;
+}
+
+.market-brief-coin-table {
+  width: 100%;
+  min-width: 44rem;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+.market-brief-coin-table :is(th, td) {
+  border-top: 1px solid var(--border);
+  padding: 0.5rem 0.5rem;
+  text-align: right;
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.market-brief-coin-table thead th {
+  border-top: 0;
+  color: var(--muted-foreground);
+  font-weight: 600;
+}
+
+.market-brief-coin-table :is(thead th, tbody th):first-child {
+  text-align: left;
+}
+
+.market-brief-coin-table tbody th {
+  color: var(--foreground);
+  font-weight: 600;
+}
+
+.market-brief-coin-table small {
+  display: block;
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+}
+
+/* What the question screen does, shown until the first answer. */
+.hermes-market-question-empty {
+  margin-top: 1rem;
+  border: 1px dashed var(--border);
+  border-radius: var(--radius-card, 0.875rem);
+  padding: 1rem 1.25rem;
+  color: var(--muted-foreground);
+  font-size: var(--type-body);
+  line-height: 1.6;
+}
+
+.hermes-market-question-empty strong {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: var(--foreground);
+}
+
+.hermes-market-question-empty ul {
+  display: grid;
+  gap: 0.25rem;
+  padding-left: 1rem;
+  list-style: disc;
+}
+
+.main-dashboard[data-section="index2"] .app-topbar {
+  background: var(--sidebar);
+}

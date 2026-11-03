@@ -1,0 +1,830 @@
+.mi-experience {
+  --mi-duration-fast: 120ms;
+  --mi-duration-standard: 220ms;
+  --mi-duration-reveal: 420ms;
+  --mi-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --mi-ease-standard: cubic-bezier(0.2, 0, 0, 1);
+  /* The dashboard surface steps; own mixes added near-duplicate colors. */
+  --mi-surface: var(--card);
+  --mi-surface-raised: var(--card);
+  --mi-surface-subtle: var(--surface-inset);
+  --mi-panel-border: color-mix(in oklab, var(--border) 88%, transparent);
+  --mi-panel-shadow:
+    0 1px 2px color-mix(in oklab, var(--foreground) 5%, transparent),
+    0 8px 24px color-mix(in oklab, var(--foreground) 5%, transparent);
+  --mi-panel-shadow-hover:
+    0 1px 3px color-mix(in oklab, var(--foreground) 7%, transparent),
+    0 10px 28px color-mix(in oklab, var(--foreground) 7%, transparent);
+  position: relative;
+  isolation: isolate;
+  width: 100%;
+  min-width: 0;
+  overflow-x: clip;
+  color: var(--foreground);
+}
+
+.mi-experience :where(button, a[href], [role="button"]) {
+  min-height: 44px;
+  touch-action: manipulation;
+}
+
+.dark .mi-experience,
+:root[data-theme="dark"] .mi-experience {
+  --mi-panel-border: color-mix(in oklab, var(--border) 92%, transparent);
+  --mi-panel-shadow: 0 1px 2px rgb(0 0 0 / 22%), 0 8px 24px rgb(0 0 0 / 20%);
+  --mi-panel-shadow-hover:
+    0 1px 3px rgb(0 0 0 / 24%), 0 10px 30px rgb(0 0 0 / 26%);
+}
+
+.mi-hero {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  /* The decorative trend gets its own band above the copy. Drawn across the
+     whole hero it ran through the eyebrow text and behind the buttons. */
+  grid-template-rows: minmax(4.5rem, 1fr) auto;
+  min-height: clamp(22rem, 42svh, 28rem);
+  overflow: hidden;
+  border: 1px solid rgb(255 255 255 / 12%);
+  border-radius: clamp(1.25rem, 2.8vw, 2.25rem);
+  background: #0b0c10;
+  color: #f8f8fa;
+  box-shadow:
+    0 1px 2px rgb(0 0 0 / 24%),
+    0 12px 36px rgb(0 0 0 / 18%),
+    inset 0 1px 0 rgb(255 255 255 / 9%);
+}
+
+.mi-chapter.mi-overview-chapter {
+  padding-top: 0;
+  padding-bottom: 0;
+}
+
+.mi-hero::before {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: transparent;
+  content: "";
+  opacity: 0;
+  pointer-events: none;
+}
+
+.mi-hero::after {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  border: 1px solid rgb(255 255 255 / 7%);
+  border-radius: inherit;
+  content: "";
+  pointer-events: none;
+}
+
+.mi-hero-chart {
+  position: relative;
+  grid-row: 1;
+  min-height: 4.5rem;
+  z-index: 0;
+  overflow: hidden;
+  opacity: 0.32;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+.mi-hero-chart :where(svg, canvas) {
+  width: 100%;
+  height: 100%;
+}
+
+.mi-hero-grid {
+  position: relative;
+  grid-row: 2;
+  z-index: 2;
+  display: grid;
+  grid-template-columns: minmax(16rem, 1fr) minmax(20rem, 38rem);
+  align-items: end;
+  gap: clamp(1rem, 2vw, 1.75rem);
+  width: 100%;
+  min-width: 0;
+  padding: clamp(1rem, 2vw, 1.5rem);
+}
+
+.mi-hero-copy {
+  position: relative;
+  z-index: 2;
+  align-self: end;
+  max-width: 62rem;
+  min-width: 0;
+  text-wrap: balance;
+}
+
+.mi-hero-status-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem 1rem;
+  margin-bottom: 0.25rem;
+  color: rgb(238 238 243 / 64%);
+  font-size: var(--type-caption);
+  font-variant-numeric: tabular-nums;
+}
+
+.mi-live-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  color: rgb(248 248 250 / 88%);
+  font-weight: 600;
+}
+
+.mi-live-status > span {
+  width: 0.48rem;
+  height: 0.48rem;
+  border-radius: 999px;
+  background: #f2b84b;
+  box-shadow: 0 0 0 0.24rem rgb(242 184 75 / 14%);
+}
+
+.mi-live-status.is-live > span {
+  background: #56d49a;
+  box-shadow: 0 0 0 0.24rem rgb(86 212 154 / 14%);
+}
+
+.mi-hero-eyebrow {
+  margin: 0 0 0.25rem;
+  color: rgb(248 248 250 / 72%) !important;
+  font-size: var(--type-caption);
+  font-weight: 600;
+  letter-spacing: 0.08em;
+}
+
+.mi-hero-title {
+  max-width: none;
+  margin: 0;
+  color: #ffffff;
+  font-size: var(--type-display);
+  font-weight: 700;
+  line-height: 1.06;
+  letter-spacing: -0.035em;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.mi-hero-title:focus,
+.mi-section-title:focus {
+  outline: none;
+}
+
+.mi-hero-copy :where(p) {
+  max-width: 58ch;
+  color: rgb(238 238 243 / 70%);
+  line-height: 1.7;
+}
+
+.mi-hero-description {
+  margin-top: 0.5rem;
+  font-size: var(--type-caption);
+  line-height: 1.25rem;
+}
+
+.mi-hero-actions {
+  display: flex;
+  min-width: 0;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.mi-hero-actions :where(button, a, [role="button"]) {
+  display: inline-flex;
+  min-height: 44px;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgb(255 255 255 / 20%);
+  border-radius: 999px;
+  background: rgb(255 255 255 / 8%);
+  padding: 0.75rem 1rem;
+  color: #ffffff;
+  transition:
+    opacity var(--mi-duration-fast) linear,
+    transform var(--mi-duration-standard) var(--mi-ease-out),
+    background-color var(--mi-duration-fast) linear;
+}
+
+.mi-hero-actions .is-primary {
+  border-color: #ffffff;
+  background: #ffffff;
+  color: #09090b;
+}
+
+.mi-hero-actions .is-primary:hover,
+.mi-hero-actions .is-primary:focus-visible {
+  background: rgb(255 255 255 / 88%);
+}
+
+.mi-hero-actions :where(button, a, [role="button"]):hover,
+.mi-hero-actions :where(button, a, [role="button"]):focus-visible {
+  background: rgb(255 255 255 / 14%);
+  transform: translate3d(0, -2px, 0);
+}
+
+.mi-hero-actions :where(button, a, [role="button"]):focus-visible {
+  outline: 2px solid #ffffff;
+  outline-offset: 3px;
+}
+
+.mi-hero-metrics {
+  position: relative;
+  z-index: 3;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  min-width: 0;
+  border-top: 1px solid rgb(255 255 255 / 13%);
+  background: #08090c;
+}
+
+.mi-experience .mi-hero .mi-metric-featured {
+  align-self: end;
+  border-color: rgb(255 255 255 / 32%);
+  background: rgb(250 250 252 / 94%);
+  color: #101014;
+  box-shadow:
+    0 1px 1px rgb(255 255 255 / 54%) inset,
+    0 8px 24px rgb(0 0 0 / 24%);
+}
+
+.mi-experience .mi-hero .mi-metric-featured .mi-metric-value {
+  color: #101014;
+}
+
+.mi-experience .mi-hero .mi-metric-featured :where(.text-muted-foreground) {
+  color: rgb(16 16 20 / 58%);
+}
+
+.mi-experience .mi-hero .mi-metric-featured :where(.text-primary) {
+  color: var(--primary);
+}
+
+.mi-metric-card {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--mi-panel-border);
+  border-radius: calc(var(--radius) + 0.25rem);
+  background: var(--mi-surface);
+  padding: clamp(1rem, 1.6vw, 1.25rem);
+  box-shadow: var(--mi-panel-shadow);
+  transform: translate3d(0, 0, 0);
+  transition:
+    border-color var(--mi-duration-fast) linear,
+    box-shadow var(--mi-duration-standard) var(--mi-ease-standard),
+    transform var(--mi-duration-standard) var(--mi-ease-out);
+}
+
+.mi-experience .mi-hero .mi-hero-metrics .mi-metric-card {
+  border-width: 0;
+  border-right: 1px solid rgb(255 255 255 / 12%);
+  border-radius: 0;
+  background: transparent;
+  color: #ffffff;
+  box-shadow: none;
+}
+
+.mi-hero .mi-metric-card :where(.mt-3) {
+  margin-top: 0.5rem;
+}
+
+.mi-hero .mi-metric-card :where(.mt-2, .mt-1) {
+  margin-top: 0.25rem;
+}
+
+.mi-hero-metrics .mi-metric-card:last-child {
+  border-right: 0;
+}
+
+.mi-metric-value {
+  display: block;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  font-size: var(--type-display);
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.055em;
+  font-variant-numeric: tabular-nums;
+}
+
+.mi-hero-metrics .mi-metric-value {
+  color: #ffffff;
+}
+
+.mi-hero-metrics :where(.text-muted-foreground) {
+  color: rgb(248 248 250 / 74%);
+}
+
+.mi-hero-metrics :where(.text-loss) {
+  color: #ffbfc4;
+}
+
+.mi-hero-metrics :where(.text-profit) {
+  color: #a9ebca;
+}
+
+.mi-hero-metrics :where(.text-gold) {
+  color: #ffda8a;
+}
+
+.mi-chapter-nav {
+  position: sticky;
+  top: max(0.75rem, env(safe-area-inset-top));
+  z-index: 30;
+  width: 100%;
+  min-width: 0;
+  margin-block: clamp(1rem, 2.5vw, 2rem);
+  border: 1px solid var(--mi-panel-border);
+  border-radius: 999px;
+  background: var(--background);
+  padding: 0.25rem;
+  box-shadow: 0 2px 10px color-mix(in oklab, var(--foreground) 6%, transparent);
+}
+
+.mi-chapter-nav::after {
+  position: absolute;
+  right: 0.65rem;
+  bottom: -1px;
+  left: 0.65rem;
+  height: 2px;
+  border-radius: 999px;
+  background: linear-gradient(
+    90deg,
+    var(--primary) 0 var(--mi-progress),
+    transparent var(--mi-progress) 100%
+  );
+  content: "";
+  opacity: 0.72;
+  pointer-events: none;
+  transition: background var(--mi-duration-standard) var(--mi-ease-out);
+}
+
+.mi-chapter-nav-track {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.mi-chapter-progress,
+.mi-chapter-selected-asset {
+  display: inline-flex;
+  min-height: 44px;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 0.25rem;
+  padding-inline: 0.75rem;
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mi-chapter-progress {
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.08em;
+}
+
+.mi-chapter-progress > span {
+  opacity: 0.45;
+}
+
+.mi-chapter-selected-asset {
+  border-left: 1px solid var(--mi-panel-border);
+}
+
+.mi-chapter-selected-asset strong {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.mi-chapter-nav-button {
+  display: inline-flex;
+  min-height: 44px;
+  min-width: 44px;
+  flex: 1 1 0;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  background: transparent;
+  padding: 0.75rem 1rem;
+  color: var(--muted-foreground);
+  font-size: var(--type-body);
+  font-weight: 600;
+  line-height: 1;
+  text-align: center;
+  white-space: nowrap;
+  transition:
+    color var(--mi-duration-fast) linear,
+    opacity var(--mi-duration-fast) linear,
+    transform var(--mi-duration-standard) var(--mi-ease-out),
+    background-color var(--mi-duration-fast) linear;
+}
+
+.mi-chapter-nav-button:hover,
+.mi-chapter-nav-button:focus-visible {
+  color: var(--foreground);
+  transform: translate3d(0, -2px, 0);
+}
+
+.mi-chapter-nav-button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.mi-chapter-nav-button[aria-current="true"],
+.mi-chapter-nav-button[aria-current="page"] {
+  border-color: color-mix(in oklab, var(--primary) 24%, var(--border));
+  background: color-mix(in srgb, var(--primary) 10%, var(--card));
+  color: var(--foreground);
+  box-shadow: inset 0 1px 0 color-mix(in oklab, white 45%, transparent);
+}
+
+.mi-chapter {
+  min-width: 0;
+  padding-block: clamp(2.25rem, 5vw, 4.5rem);
+  scroll-margin-top: 6.5rem;
+  content-visibility: auto;
+  contain-intrinsic-size: auto 900px;
+}
+
+.mi-section-heading {
+  display: grid;
+  grid-template-columns: minmax(16rem, 0.9fr) minmax(22rem, 1.1fr);
+  align-items: end;
+  column-gap: clamp(2rem, 5vw, 5rem);
+  row-gap: 0.75rem;
+  min-width: 0;
+  margin-bottom: clamp(1rem, 2vw, 1.75rem);
+}
+
+.mi-section-heading-copy {
+  display: grid;
+  min-width: 0;
+  gap: 0.75rem;
+}
+
+.mi-section-kicker {
+  display: inline-flex;
+  align-items: center;
+  width: max-content;
+  gap: 0.5rem;
+  color: var(--primary);
+  font-size: var(--type-caption);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.mi-section-kicker::before {
+  width: 1.75rem;
+  height: 1px;
+  background: currentColor;
+  content: "";
+}
+
+.mi-section-kicker-index {
+  color: var(--foreground);
+  font-variant-numeric: tabular-nums;
+}
+
+.mi-section-kicker-label {
+  color: var(--primary);
+}
+
+.mi-section-title {
+  max-width: none;
+  margin: 0;
+  font-size: var(--type-display);
+  font-weight: 700;
+  line-height: 1.12;
+  letter-spacing: -0.025em;
+  text-wrap: balance;
+  word-break: keep-all;
+}
+
+.mi-section-description {
+  max-width: 58ch;
+  margin: 0;
+  justify-self: start;
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+  line-height: 1.25rem;
+  text-wrap: pretty;
+}
+
+.mi-panel {
+  position: relative;
+  isolation: isolate;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid var(--mi-panel-border);
+  border-radius: clamp(1rem, 2vw, 1.5rem);
+  background: var(--mi-surface);
+  box-shadow: var(--mi-panel-shadow);
+  transform: translate3d(0, 0, 0);
+  transition:
+    border-color var(--mi-duration-fast) linear,
+    box-shadow var(--mi-duration-standard) var(--mi-ease-standard),
+    transform var(--mi-duration-standard) var(--mi-ease-out);
+}
+
+.mi-alert {
+  margin-top: 1rem;
+  box-shadow: 0 14px 38px color-mix(in oklab, var(--gold) 8%, transparent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mi-metric-card:hover,
+  .mi-panel:hover {
+    border-color: color-mix(in oklab, var(--primary) 28%, var(--border));
+    box-shadow: var(--mi-panel-shadow-hover);
+  }
+}
+
+.mi-metric-card:focus-within,
+.mi-panel:focus-within {
+  border-color: color-mix(in oklab, var(--primary) 36%, var(--border));
+  box-shadow: var(--mi-panel-shadow-hover);
+}
+
+.mi-panel :where(button, a, [role="button"]):focus-visible,
+.mi-metric-card :where(button, a, [role="button"]):focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 3px;
+}
+
+.mi-waterfall-row,
+.mi-capture-node {
+  transform-box: fill-box;
+  transform-origin: center;
+  transition:
+    opacity var(--mi-duration-fast) linear,
+    transform var(--mi-duration-standard) var(--mi-ease-out),
+    background-color var(--mi-duration-fast) linear;
+}
+
+.mi-waterfall-row:hover,
+.mi-waterfall-row:focus-visible,
+.mi-waterfall-row[aria-pressed="true"] {
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+  transform: translate3d(0, -2px, 0);
+}
+
+.mi-capture-node:hover,
+.mi-capture-node:focus-visible,
+.mi-capture-node.is-selected {
+  opacity: 1;
+  transform: scale(1.04);
+}
+
+.mi-capture-node:focus-visible {
+  filter: drop-shadow(
+    0 0 0.45rem color-mix(in oklab, var(--ring) 72%, transparent)
+  );
+}
+
+.mi-capture-map {
+  background: var(--background);
+}
+
+.mi-reveal-ready {
+  opacity: 0;
+  transform: translate3d(0, 1.25rem, 0);
+  transition:
+    opacity var(--mi-duration-reveal) linear,
+    transform var(--mi-duration-reveal) var(--mi-ease-out);
+  will-change: opacity, transform;
+}
+
+.mi-reveal-ready.mi-revealed {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+  will-change: auto;
+}
+
+@media (max-width: 900px) {
+  .mi-hero {
+    min-height: auto;
+  }
+
+  .mi-hero-grid,
+  .mi-section-heading {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .mi-hero-grid {
+    align-content: end;
+  }
+
+  .mi-hero-title {
+    font-size: var(--type-display);
+    line-height: 1.1;
+  }
+
+  .mi-hero-metrics {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
+  .mi-chapter-nav {
+    max-width: 100%;
+    border-radius: 0.95rem;
+    overflow: hidden;
+  }
+
+  .mi-chapter-nav-track {
+    overflow-x: auto;
+    overscroll-behavior-inline: contain;
+    scroll-padding-inline: 0.25rem;
+    scroll-snap-type: inline mandatory;
+    scrollbar-width: none;
+  }
+
+  .mi-chapter-nav-track::-webkit-scrollbar {
+    display: none;
+  }
+
+  .mi-chapter-nav-button {
+    flex: 0 0 auto;
+    scroll-snap-align: center;
+    padding-inline: 1rem;
+  }
+
+  .mi-chapter-progress,
+  .mi-chapter-selected-asset {
+    scroll-snap-align: center;
+  }
+
+  .mi-chapter-selected-asset {
+    display: none;
+  }
+
+  .mi-section-description {
+    max-width: 68ch;
+    justify-self: start;
+  }
+}
+
+@media (max-width: 640px) {
+  .mi-experience {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .mi-hero {
+    min-height: auto;
+    border-radius: 1.125rem;
+  }
+
+  .mi-hero-grid {
+    gap: 1.25rem;
+    padding: clamp(1rem, 5vw, 1.5rem);
+  }
+
+  .mi-hero-title {
+    max-width: none;
+    font-size: var(--type-display);
+    line-height: 1.1;
+    letter-spacing: -0.035em;
+  }
+
+  .mi-hero-copy :where(p) {
+    font-size: var(--type-caption);
+    line-height: 1.25rem;
+  }
+
+  .mi-hero-actions {
+    width: 100%;
+  }
+
+  .mi-hero-actions :where(button, a, [role="button"]) {
+    flex: 1 1 auto;
+  }
+
+  .mi-hero-metrics {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .mi-hero-metrics .mi-metric-card:nth-child(2) {
+    border-right: 0;
+  }
+
+  .mi-hero-metrics .mi-metric-card:nth-child(-n + 2) {
+    border-bottom: 1px solid rgb(255 255 255 / 12%);
+  }
+
+  .mi-hero-metrics .mi-metric-card:last-child {
+    grid-column: 1 / -1;
+    border-right: 0;
+  }
+
+  .mi-hero-metrics .mi-metric-card {
+    min-height: 5.1rem;
+    padding: 0.75rem;
+  }
+
+  .mi-hero-metrics .mi-metric-value {
+    font-size: var(--type-display);
+  }
+
+  .mi-chapter {
+    padding-block: 2.25rem;
+    scroll-margin-top: 5.75rem;
+    contain-intrinsic-size: auto 720px;
+  }
+
+  .mi-section-heading {
+    gap: 0.75rem;
+    margin-bottom: 1rem;
+  }
+
+  .mi-section-heading-copy {
+    gap: 0.5rem;
+  }
+
+  .mi-section-title {
+    max-width: none;
+    font-size: var(--type-display);
+    line-height: 1.2;
+  }
+
+  .mi-section-description {
+    font-size: var(--type-caption);
+    line-height: 1.25rem;
+  }
+
+  .mi-panel,
+  .mi-metric-card {
+    max-width: 100%;
+    border-radius: 1rem;
+  }
+}
+
+@media (max-width: 359px) {
+  .mi-hero-grid {
+    padding-inline: 1rem;
+  }
+
+  .mi-hero-title {
+    font-size: var(--type-display);
+  }
+
+  .mi-hero-metrics .mi-metric-card {
+    padding-inline: 0.75rem;
+  }
+
+  .mi-chapter-nav-button {
+    padding-inline: 0.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .mi-experience,
+  .mi-experience * {
+    scroll-behavior: auto !important;
+  }
+
+  .mi-experience *,
+  .mi-experience *::before,
+  .mi-experience *::after {
+    animation: none !important;
+    transition: none !important;
+  }
+
+  .mi-reveal-ready,
+  .mi-reveal-ready.mi-revealed {
+    opacity: 1;
+    transform: none;
+    will-change: auto;
+  }
+
+  .mi-metric-card:hover,
+  .mi-metric-card:focus-within,
+  .mi-panel:hover,
+  .mi-panel:focus-within,
+  .mi-chapter-nav-button:hover,
+  .mi-chapter-nav-button:focus-visible {
+    transform: none;
+  }
+
+  .mi-waterfall-row:hover,
+  .mi-waterfall-row:focus-visible,
+  .mi-waterfall-row[aria-pressed="true"],
+  .mi-capture-node:hover,
+  .mi-capture-node:focus-visible,
+  .mi-capture-node.is-selected {
+    transform: none;
+  }
+}

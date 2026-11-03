@@ -1,0 +1,37 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1"
+    />
+    <meta
+      name="description"
+      content="MarketGO 공유용 오프라인 데이터 스냅샷"
+    />
+    <link
+      rel="icon"
+      href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%23ff6c00'/%3E%3Ctext x='16' y='22' font-size='14' font-weight='700' text-anchor='middle' fill='white' font-family='sans-serif'%3EMS%3C/text%3E%3C/svg%3E"
+    />
+    <title>MarketGO · Offline Data</title>
+  </head>
+
+  <body>
+    <div class="standalone-snapshot-bar" role="status">
+      <div>
+        <strong>이 파일에 저장된 시장 데이터</strong>
+        <span>저장된 체결·점유율 흐름 반복 재생 중</span>
+      </div>
+      <span
+        class="standalone-runtime-status"
+        data-standalone-runtime-status
+        data-state="pending"
+        >대시보드 확인 중</span
+      >
+    </div>
+    <div id="root"></div>
+    <noscript>이 프론트를 보려면 JavaScript를 켜야 합니다.</noscript>
+    <script type="module" src="/src/standalone-main.tsx"></script>
+  </body>
+</html>

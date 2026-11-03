@@ -1,0 +1,76 @@
+/* Index overview and controls. Dense data columns keep their existing contract. */
+.main-dashboard .domestic-index.di-refined { --di-gutter:24px; padding-bottom: 24px; }
+.main-dashboard .di-refined .di-heading { align-items:flex-start; padding: 24px var(--di-gutter) 0; border:0; }
+.main-dashboard .di-refined .di-heading h2 { margin-top: 8px; white-space:normal; font-size:var(--type-title); letter-spacing:-.035em; }
+.di-refined .di-eyebrow,.di-refined .di-brand,.di-refined .di-date-label { color:var(--muted-foreground); font-size:var(--type-caption); }
+.di-refined .di-brand { padding-top: 4px; font-weight:700; letter-spacing:-.02em; }
+.di-refined .di-overview { display:flex; align-items:center; justify-content:space-between; gap: 24px; padding: 24px var(--di-gutter); }
+.main-dashboard .di-refined .di-grand { display:grid; gap: 8px; margin: 0; width:auto; min-width:0; }
+.main-dashboard .di-refined .di-grand b { display:block; margin: 0; color:var(--foreground); font-size:var(--type-display); font-weight:700; letter-spacing:-.035em; font-variant-numeric:tabular-nums; line-height:1.3; overflow-wrap:anywhere; }
+.main-dashboard .di-refined .di-grand small { font-size:var(--type-body); font-weight:500; white-space:nowrap; color:var(--muted-foreground); letter-spacing:0; }
+.di-refined .di-date-controls { display:grid; gap: 8px; flex-shrink:0; }
+.main-dashboard .di-refined .di-filters { padding: 0; gap: 8px; flex-wrap:nowrap; }
+.main-dashboard .di-refined .di-filters input { max-width:none; min-width:0; }
+.di-refined .di-quick-days { display:flex; justify-content:flex-end; gap: 8px; }
+.di-refined .di-quick-days button { min-height:36px; padding: 4px 16px; border-radius:6px; font-size:var(--type-caption); color:var(--muted-foreground); cursor:pointer; }
+.di-refined .di-quick-days button[aria-pressed=true] { background:var(--secondary); color:var(--foreground); }
+.main-dashboard .di-refined .di-cards { padding-inline: var(--di-gutter); gap: 12px; }
+.main-dashboard .domestic-index.di-refined .di-card { min-height:150px; padding: 20px; text-align:left; box-shadow:none; }
+.main-dashboard .di-refined .di-card p { margin: 20px 0 4px; font-size:var(--type-display); letter-spacing:-.04em; }
+.main-dashboard .domestic-index.di-refined .di-card.di-stacked { padding: 8px 16px; }
+.main-dashboard .di-refined .di-stacked-venue { align-items:stretch; gap: 2px; }
+.main-dashboard .di-refined .di-stacked-venue h3 { justify-content:space-between; font-weight:500; }
+.main-dashboard .di-refined .di-stacked-venue small { text-align:right; }
+.di-refined .di-data-status { margin: 16px var(--di-gutter) 28px; }
+.di-refined .di-coin-toolbar { display:flex; align-items:center; justify-content:space-between; gap: 16px; margin: 0 var(--di-gutter) 12px; }
+.di-refined .di-table-heading { display:flex; align-items:baseline; flex-wrap:wrap; gap: 8px; }
+.di-refined .di-table-heading h3 { font-size:var(--type-body); font-weight:600; }
+.di-refined .di-table-heading>span { font-size:var(--type-caption); color:var(--muted-foreground); }
+.di-refined .di-search-actions { display:flex; gap: 8px; min-width:0; }
+.main-dashboard .di-refined .di-search { display:flex; align-items:center; gap: 8px; min-height:44px; width:270px; max-width:none; padding: 0 12px; background:var(--background); }
+.di-refined .di-search svg { flex-shrink:0; }
+.main-dashboard .di-refined .di-search input { width:100%; min-height:42px; font-size:var(--type-body); }
+.di-refined .di-search button { display:grid; place-items:center; min-height:44px; min-width:44px; }
+.di-refined .di-filter-toggle { display:flex; align-items:center; gap: 8px; min-height:44px; padding: 0 16px; border:1px solid var(--border); border-radius:10px; background:var(--background); font-size:var(--type-caption); white-space:nowrap; cursor:pointer; }
+.di-refined .di-filter-toggle[aria-expanded=true] { border-color:var(--primary); color:var(--primary); }
+.di-refined .di-filter-toggle>span { min-width:20px; padding: 1px 4px; border-radius:5px; background:var(--secondary); color:var(--foreground); }
+.main-dashboard .domestic-index.di-refined .di-index-filters { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); margin: 0 var(--di-gutter) 12px; padding: 16px; gap: 12px; overflow:visible; }
+.main-dashboard .domestic-index.di-refined .di-index-filters[hidden] { display:none; }
+.main-dashboard .domestic-index.di-refined .di-index-filters>label { min-width:0; grid-column:auto; }
+.main-dashboard .domestic-index.di-refined .di-index-filters select { max-width:100%; font-size:var(--type-body); }
+.main-dashboard .domestic-index.di-refined .di-index-filters>button { grid-column:1 / -1; justify-self:start; }
+.main-dashboard .domestic-index.di-refined .di-index-filters>span { display:none; }
+.main-dashboard .di-refined .di-table-tools { padding: 0 var(--di-gutter) 12px; flex-wrap:wrap; gap: 8px; }
+.main-dashboard .di-refined .di-table-tools>span { display:block; flex:1 1 200px; font-size:var(--type-caption); }
+.main-dashboard .di-refined .di-table-tools button { min-height:44px; }
+.main-dashboard .di-refined .di-table-scroll { margin-inline: var(--di-gutter); }
+.main-dashboard .di-refined .di-more { margin-inline: var(--di-gutter); }
+.main-dashboard .di-refined .di-more button { min-height:44px; }
+@media(min-width:1500px) {
+  .main-dashboard .domestic-index.di-refined .di-index-filters { grid-template-columns:repeat(6,minmax(0,1fr)); }
+}
+@media(max-width:800px) {
+  .main-dashboard .domestic-index.di-refined { --di-gutter:16px; }
+  .di-refined .di-overview { align-items:flex-start; flex-direction:column; gap: 20px; }
+  .di-refined .di-date-controls { grid-template-columns:minmax(0,1fr) auto; align-items:end; width:100%; }
+  .di-refined .di-date-label { grid-column:1 / -1; }
+  .di-refined .di-quick-days button { min-height:44px; padding-inline: 12px; }
+  .di-refined .di-coin-toolbar { flex-direction:column; align-items:stretch; gap: 12px; }
+  .di-refined .di-search-actions { width:100%; }
+  .main-dashboard .di-refined .di-search { width:auto; flex:1; min-width:0; }
+  .main-dashboard .domestic-index.di-refined .di-index-filters { grid-template-columns:repeat(2,minmax(0,1fr)); padding: 12px; }
+  .main-dashboard .domestic-index.di-refined .di-card { padding: 16px; min-height:144px; }
+  .main-dashboard .di-refined .di-card p { font-size:var(--type-title); }
+}
+@media(max-width:480px) {
+  .di-refined .di-brand { display:none; }
+  .di-refined .di-date-controls { grid-template-columns:minmax(0,1fr); }
+  .di-refined .di-quick-days { justify-content:flex-start; }
+  .main-dashboard .di-refined .di-filters input { flex:1; width:100%; }
+  .main-dashboard .di-refined .di-filters button { min-width:64px; }
+  .main-dashboard .di-refined .di-cards { gap: 8px; }
+  .main-dashboard .domestic-index.di-refined .di-card { padding: 16px 12px; }
+  .main-dashboard .domestic-index.di-refined .di-card.di-stacked { padding: 8px 12px; }
+  .main-dashboard .di-refined .di-stacked-venue h3 { gap: 4px; font-size:var(--type-caption); }
+  .main-dashboard .di-refined .di-table-tools>span { flex-basis:100%; }
+}

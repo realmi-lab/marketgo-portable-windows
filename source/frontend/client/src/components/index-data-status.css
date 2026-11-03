@@ -1,0 +1,23 @@
+.index-data-status { display:grid; grid-template-columns:minmax(0,1fr) auto; gap: 8px 20px; padding: 16px 20px; border:1px solid var(--border); border-radius:12px; background:var(--background); color:var(--muted-foreground); font-size:var(--type-caption); line-height:1.6; }
+.index-data-status .ids-explanation { display:flex; flex-wrap:wrap; align-items:center; gap: 8px 12px; min-width:0; }
+.index-data-status .ids-explanation p { margin: 0; }
+.index-data-status .ids-coverage { grid-column:1; margin: 0; }
+.index-data-status .ids-badge { display:inline-flex; flex-shrink:0; align-items:center; gap: 8px; padding: 4px 8px; border-radius:6px; background:var(--secondary); color:var(--foreground); font-weight:600; }
+.index-data-status .ids-badge i { width:6px; height:6px; border-radius:50%; background:currentColor; }
+.index-data-status .ids-badge.is-warning { color:var(--primary); background:color-mix(in srgb,var(--primary) 10%,var(--background)); }
+.index-data-status .ids-badge.is-active { color:var(--info); background:color-mix(in srgb,var(--info) 10%,var(--background)); }
+.index-data-status .ids-period { display:flex; align-items:center; gap: 8px; grid-column:1; min-width:0; }
+.index-data-status .ids-period svg { flex-shrink:0; }
+.index-data-status .ids-period strong { color:var(--foreground); font-weight:500; font-variant-numeric:tabular-nums; }
+.index-data-status .ids-update { display:flex; gap: 12px; align-items:center; justify-content:flex-end; grid-column:2; grid-row:1 / span 3; }
+.index-data-status button { display:inline-flex; align-items:center; justify-content:center; gap: 8px; min-height:44px; padding: 0 12px; border:1px solid var(--border); border-radius:8px; background:var(--card); color:var(--foreground); font:inherit; cursor:pointer; white-space:nowrap; }
+.index-data-status button:hover { background:var(--accent); }
+.index-data-status button:focus-visible { outline:2px solid var(--ring); outline-offset:2px; }
+.index-data-status button:disabled { opacity:.6; cursor:wait; }
+.index-data-status.is-compact { grid-template-columns:minmax(0,1fr); border-radius:0; padding: 12px; margin-top: 16px; }
+.index-data-status.is-compact .ids-update { grid-column:1; grid-row:auto; justify-content:space-between; }
+.index-data-status.is-compact .ids-explanation { align-items:flex-start; }
+@media(max-width:700px) {
+  .index-data-status { grid-template-columns:minmax(0,1fr); gap: 12px; padding: 16px; }
+  .index-data-status .ids-update { grid-column:1; grid-row:auto; justify-content:space-between; }
+}

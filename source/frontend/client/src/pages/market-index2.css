@@ -1,0 +1,752 @@
+.main-dashboard[data-section="index2"] .dashboard-content {
+  overflow: hidden;
+  padding: 0;
+}
+
+.main-dashboard[data-section="index2"] .dashboard-page {
+  height: 100%;
+  max-width: none;
+}
+
+.index2-terminal {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0;
+  overflow: hidden;
+  color: var(--foreground);
+  background: var(--background);
+  font-family: var(--font-sans);
+  font-size: var(--type-caption);
+  line-height: 1.35;
+  /* Break Korean between words, not inside one (부족/한, 시/간봉). */
+  word-break: keep-all;
+  overflow-wrap: anywhere;
+  -webkit-font-smoothing: antialiased;
+}
+
+.index2-terminal *,
+.index2-terminal *::before,
+.index2-terminal *::after {
+  box-sizing: border-box;
+}
+
+.index2-terminal ::selection {
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.index2-pane {
+  min-width: 0;
+  min-height: 0;
+}
+
+.index2-scroll {
+  height: 100%;
+  overflow: auto;
+  /* Reserve the scrollbar so a pane does not narrow when its content grows. */
+  scrollbar-gutter: stable;
+  padding: 24px;
+}
+
+.index2-scroll::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+.index2-scroll::-webkit-scrollbar-track {
+  border-left: 1px solid var(--border);
+  background: transparent;
+}
+
+.index2-scroll::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+}
+
+/* Pane widths do not depend on their content: with a content-sized middle
+   pane the three panes shifted by 16px when the table arrived. */
+.index2-overview {
+  flex: 0 0 clamp(260px, 25%, 320px);
+  width: 25%;
+  min-width: 260px;
+  max-width: 320px;
+  border-right: 1px solid var(--border);
+  background: linear-gradient(160deg, color-mix(in srgb, var(--primary) 7%, var(--card)), var(--card) 65%);
+}
+
+.index2-overview-content {
+  display: flex;
+  flex-direction: column;
+}
+
+.index2-detail {
+  flex: 1 1 0;
+  min-width: 500px;
+  border-right: 1px solid var(--border);
+  background: var(--card);
+}
+
+.index2-visual {
+  flex: 0 0 clamp(240px, 22%, 300px);
+  width: 22%;
+  min-width: 240px;
+  color: var(--foreground);
+  background: var(--card);
+}
+
+.index2-visual-scroll {
+  padding: 12px;
+}
+
+.index2-ascii {
+  margin: 0 0 24px;
+  white-space: pre;
+  font: inherit;
+  font-size: var(--type-caption);
+  font-weight: 400;
+  line-height: 1.05;
+  text-transform: uppercase;
+}
+
+.index2-copy {
+  margin: 0;
+  font-size: var(--type-caption);
+}
+
+.index2-date {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 24px;
+  text-transform: uppercase;
+}
+
+.index2-date input,
+.index2-search input {
+  min-height: 32px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  outline: none;
+  color: var(--foreground);
+  background: transparent;
+  font: inherit;
+}
+
+.index2-date input {
+  width: 142px;
+  padding: 4px 8px;
+}
+
+.index2-date input:focus,
+.index2-search input:focus,
+.index2-view-switch button:focus-visible,
+.index2-visual-heading button:focus-visible {
+  outline: 2px solid var(--ring);
+  outline-offset: 2px;
+}
+
+.index2-divider {
+  width: 100%;
+  margin: 16px 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: var(--type-caption);
+  letter-spacing: 2px;
+}
+
+.index2-summary-heading,
+.index2-toolbar,
+.index2-visual-heading,
+.index2-grid-title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.index2-summary-heading strong {
+  text-align: right;
+  font-weight: 400;
+  font-variant-numeric: tabular-nums;
+}
+.index2-summary-heading { flex-wrap: wrap; }
+.index2-summary-heading strong { white-space: nowrap; }
+
+.index2-bar {
+  position: relative;
+  display: flex;
+  width: 100%;
+  height: 16px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+}
+
+.index2-bar-large {
+  height: 24px;
+  margin: 12px 0 16px;
+}
+
+.index2-bar-inverse {
+  border-color: var(--border);
+}
+
+.index2-bar-empty {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  overflow: hidden;
+  white-space: nowrap;
+  font-size: var(--type-caption);
+  /* The bar is 14px tall; the caption's default line box is taller and
+     clipped the bottom of "자료 확인 중". */
+  line-height: 1;
+  opacity: 0.65;
+}
+
+.index2-texture {
+  display: inline-block;
+  flex: 0 0 auto;
+  min-width: 1px;
+  height: 100%;
+  border: 1px solid var(--border);
+}
+
+.index2-texture-solid {
+  background: var(--foreground);
+}
+
+.index2-texture-outline {
+  background: transparent;
+}
+
+.index2-texture-slash {
+  background: repeating-linear-gradient(45deg, var(--foreground), var(--foreground) 1px, transparent 1px, transparent 4px);
+}
+
+.index2-texture-backslash {
+  background: repeating-linear-gradient(-45deg, var(--foreground), var(--foreground) 1px, transparent 1px, transparent 4px);
+}
+
+.index2-texture-dots {
+  background-image: radial-gradient(var(--foreground) 1px, transparent 0);
+  background-size: 4px 4px;
+}
+
+.index2-texture-inverse {
+  border-color: var(--border);
+}
+
+.index2-texture-solid.index2-texture-inverse {
+  background: var(--foreground);
+}
+
+.index2-texture-outline.index2-texture-inverse {
+  background: transparent;
+}
+
+.index2-texture-slash.index2-texture-inverse {
+  background: repeating-linear-gradient(45deg, var(--foreground), var(--foreground) 1px, transparent 1px, transparent 4px);
+}
+
+.index2-texture-backslash.index2-texture-inverse {
+  background: repeating-linear-gradient(-45deg, var(--foreground), var(--foreground) 1px, transparent 1px, transparent 4px);
+}
+
+.index2-texture-dots.index2-texture-inverse {
+  background-image: radial-gradient(var(--foreground) 1px, transparent 0);
+}
+
+.index2-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: var(--type-caption);
+  text-transform: uppercase;
+}
+
+.index2-legend li {
+  display: grid;
+  grid-template-columns: 12px 52px 1fr;
+  align-items: center;
+  gap: 8px;
+}
+
+.index2-legend-box {
+  width: 12px;
+  height: 12px;
+}
+
+.index2-status {
+  margin-top: auto;
+  padding-top: 16px;
+  text-transform: uppercase;
+}
+
+.index2-status span,
+.index2-view-switch button.is-selected {
+  border: 1px solid var(--primary);
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.index2-status span {
+  padding: 1px 4px;
+  font-size: var(--type-caption);
+}
+
+.index2-source {
+  margin: 12px 0 0;
+  font-size: var(--type-caption);
+}
+
+.index2-toolbar {
+  margin-bottom: 24px;
+}
+
+.index2-view-switch {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.index2-view-switch button,
+.index2-visual-heading button {
+  min-height: 32px;
+  padding: 4px 8px;
+  border: 1px solid var(--border);
+  border-radius: 0;
+  color: var(--foreground);
+  background: transparent;
+  font: inherit;
+  font-size: var(--type-caption);
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.index2-search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: var(--type-caption);
+  white-space: nowrap;
+}
+
+.index2-search input {
+  width: 136px;
+  padding: 4px 8px;
+}
+
+.index2-search input:disabled {
+  opacity: 0.35;
+}
+
+.index2-detail-copy {
+  max-width: 760px;
+  margin-bottom: 24px;
+}
+
+.index2-alert {
+  margin: 0 0 16px;
+  border: 1px solid var(--border);
+  padding: 8px;
+}
+
+/* Edge shadows show that the table continues to the side, and the
+   scrollbar stays visible instead of appearing only while scrolling. */
+.index2-table-wrap {
+  min-width: 0;
+  overflow-x: auto;
+  background:
+    linear-gradient(to right, var(--card) 30%, transparent) left center / 2rem 100% no-repeat local,
+    linear-gradient(to left, var(--card) 30%, transparent) right center / 2rem 100% no-repeat local,
+    radial-gradient(farthest-side at 0 50%, color-mix(in srgb, var(--foreground) 28%, transparent), transparent) left center / 0.75rem 100% no-repeat scroll,
+    radial-gradient(farthest-side at 100% 50%, color-mix(in srgb, var(--foreground) 28%, transparent), transparent) right center / 0.75rem 100% no-repeat scroll;
+  scrollbar-width: thin;
+  scrollbar-color: var(--muted-foreground) transparent;
+}
+
+.index2-table-wrap::-webkit-scrollbar {
+  height: 8px;
+}
+
+.index2-table-wrap::-webkit-scrollbar-thumb {
+  background: var(--muted-foreground);
+}
+
+.index2-filters { display: flex; flex-wrap: wrap; gap: 8px; align-items: flex-start; margin: 16px 0 24px; font-size: var(--type-caption); }
+.index2-terminal .index2-filters button { display: inline-flex; align-items: center; justify-content: center; min-height: 26px; max-width: 100%; border: 1px solid #000; background: #000; color: #fff; border-radius: 0; padding: 2px 8px; font: inherit; box-shadow: none; cursor: pointer; }
+.index2-terminal .index2-filters button[aria-expanded="true"] { background: transparent; color: var(--foreground); border-color: currentColor; }
+.index2-terminal .index2-filters button:disabled { opacity: .45; cursor: not-allowed; }
+.index2-filter-list { position: fixed; z-index: 1000; width: 200px; max-width: calc(100vw - 16px); max-height: 200px; overflow-y: auto; background: #000; color: #fff; border: 1px solid #fff; font-family: var(--font-sans); font-size: var(--type-caption); }
+.index2-filter-list button { display: block; width: 100%; padding: 8px 8px; min-height: 30px; border: 0; border-bottom: 1px dotted #ffffff33; border-radius: 0; background: #000; color: #fff; font: inherit; text-align: left; cursor: pointer; }
+.index2-filter-list button:hover, .index2-filter-list button:focus-visible, .index2-filter-list button[aria-selected="true"] { background: #fff; color: #000; }
+@media(max-width:767px) { .index2-terminal .index2-filters button, .index2-filter-list button { min-height: 44px; } }
+.index2-filters > span { flex-basis: 100%; }
+.index2-table th button { color: inherit; background: transparent; border: 0; min-height: 44px; padding: 4px; white-space: nowrap; font-size: var(--type-caption); cursor: pointer; }
+
+.index2-coin-table { min-width: 1120px; }
+.index2-table .index2-venue-cell { min-width: 112px; white-space: nowrap; }
+.index2-venue-cell small { display: block; font-size: var(--type-caption); margin-top: 4px; }
+.index2-table.index2-coin-table .breakdown { width: 180px; min-width: 180px; }
+
+.index2-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--type-caption);
+}
+
+.index2-table th,
+.index2-table td {
+  padding: 8px 4px;
+  border-bottom: 1px dotted var(--border);
+  text-align: left;
+  vertical-align: middle;
+}
+
+.index2-table thead th {
+  padding-bottom: 12px;
+  border-bottom-style: solid;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.index2-table tbody th {
+  font-weight: 400;
+}
+
+.index2-table .num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.index2-table .breakdown {
+  width: 38%;
+  min-width: 150px;
+  padding-left: 12px;
+}
+
+.index2-table .breakdown .index2-bar {
+  display: inline-flex;
+  width: calc(100% - 20px);
+  vertical-align: middle;
+}
+
+.index2-exchange-mark {
+  width: 12px;
+  height: 12px;
+  margin-left: 8px;
+  vertical-align: 3px;
+}
+
+.index2-empty {
+  padding: 28px 4px !important;
+  text-align: center !important;
+}
+
+.index2-table-end {
+  margin-top: 20px;
+  text-align: center;
+  font-size: var(--type-caption);
+  line-height: 1.8;
+  text-transform: uppercase;
+}
+
+.index2-visual-heading {
+  margin-bottom: 16px;
+  text-transform: uppercase;
+}
+
+.index2-visual-heading button {
+  min-height: 28px;
+  border-color: var(--border);
+  color: var(--foreground);
+  background: var(--secondary);
+  font-size: var(--type-caption);
+}
+
+.index2-visual-heading button:focus-visible {
+  outline-color: var(--ring);
+}
+
+.index2-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 8px;
+}
+
+.index2-grid-card {
+  display: flex;
+  aspect-ratio: 1;
+  min-height: 100px;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 8px;
+  border: 1px solid var(--border);
+  font-size: var(--type-caption);
+}
+
+.index2-grid-card:hover {
+  background: var(--accent);
+}
+
+.index2-grid-title {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.index2-grid-title strong {
+  font-weight: 400;
+}
+
+.index2-grid-title span {
+  max-width: 100%;
+  overflow-wrap: anywhere;
+  text-align: right;
+  font-size: var(--type-caption);
+}
+
+.index2-mini-chart {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  gap: 2px;
+  margin-top: 8px;
+}
+
+.index2-mini-chart > span {
+  flex: 1 1 0;
+  min-height: 4px;
+}
+
+.index2-grid-card small {
+  margin-top: 4px;
+  color: var(--muted-foreground);
+  font: inherit;
+  font-size: var(--type-caption);
+}
+
+.index2-visual-empty {
+  grid-column: 1 / -1;
+  padding: 24px 4px;
+  color: var(--muted-foreground);
+}
+
+.index2-visual-legend {
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px dashed var(--border);
+  color: var(--muted-foreground);
+  font-size: var(--type-caption);
+}
+
+@media (max-width: 1120px) {
+  .main-dashboard[data-section="index2"] .dashboard-content {
+    overflow-y: auto;
+  }
+
+  .index2-terminal {
+    display: grid;
+    height: auto;
+    min-height: 100%;
+    grid-template-columns: minmax(180px, 30%) minmax(0, 1fr);
+    align-items: stretch;
+    overflow: visible;
+  }
+
+  .index2-overview,
+  .index2-detail,
+  .index2-visual {
+    width: auto;
+    max-width: none;
+  }
+
+  .index2-overview,
+  .index2-detail {
+    min-width: 0;
+  }
+
+  .index2-visual {
+    grid-column: 1 / -1;
+    min-width: 0;
+    border-top: 1px solid var(--border);
+  }
+
+  .index2-scroll {
+    height: auto;
+    overflow: visible;
+  }
+
+  .index2-grid {
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+  }
+}
+
+@media (max-width: 767px) {
+  .main-dashboard[data-section="index2"] .dashboard-content {
+    padding-bottom: env(safe-area-inset-bottom, 0px);
+  }
+
+  .index2-terminal {
+    display: block;
+    font-size: var(--type-caption);
+  }
+
+  .index2-overview,
+  .index2-detail,
+  .index2-visual {
+    min-width: 0;
+    border: 0;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .index2-scroll,
+  .index2-visual-scroll {
+    padding: 20px 16px;
+  }
+
+  .index2-ascii {
+    font-size: var(--type-caption);
+  }
+
+  .index2-date input,
+  .index2-search input,
+  .index2-view-switch button,
+  .index2-visual-heading button {
+    min-height: 44px;
+    font-size: var(--type-body);
+  }
+
+  .index2-date {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .index2-date input {
+    width: 100%;
+  }
+
+  .index2-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .index2-view-switch button {
+    flex: 1;
+  }
+
+  .index2-search {
+    align-items: stretch;
+    flex-direction: column;
+    font-size: var(--type-caption);
+  }
+
+  .index2-search input {
+    width: 100%;
+  }
+
+  .index2-table-wrap {
+    width: 100%;
+    min-width: 0;
+    overflow-x: auto;
+  }
+
+  .index2-table {
+    width: max-content;
+    min-width: 100%;
+    font-size: var(--type-caption);
+  }
+
+  .index2-table th,
+  .index2-table td {
+    padding: 8px 8px;
+    white-space: nowrap;
+    line-height: 20px;
+  }
+
+  .index2-table .index2-venue-cell {
+    min-width: 112px;
+  }
+
+  .index2-venue-cell small {
+    margin-top: 2px;
+  }
+
+  .index2-table .breakdown {
+    width: 120px;
+    min-width: 120px;
+    padding-left: 8px;
+  }
+
+  .index2-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .index2-grid-card {
+    min-height: 142px;
+  }
+}
+
+/* The coin composition bar has no trailing exchange marker. */
+.index2-table.index2-coin-table .breakdown .index2-bar {
+  width: 100%;
+}
+
+.index2-coin-table .breakdown + .index2-venue-cell {
+  width: 112px;
+}
+
+/* Three spaces are about .75em in Pretendard, not three digit-width ch units. */
+.index2-terminal .index2-table.index2-coin-table {
+  width: max-content;
+  min-width: 0;
+}
+.index2-terminal .index2-table .index2-venue-cell {
+  width: auto;
+  min-width: 0;
+  padding-inline: .375em;
+  white-space: nowrap;
+}
+.index2-terminal .index2-venue-cell > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+.index2-terminal .index2-venue-cell button {
+  padding-inline: 0;
+}
+.index2-sort-arrow {
+  display: inline-block;
+  transform: scale(.7);
+  transform-origin: center;
+}
+
+.index2-more {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 12px;
+  font-size: var(--type-caption);
+}
+
+.index2-terminal .index2-more button {
+  min-height: 32px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--foreground);
+  padding: 4px 12px;
+  font: inherit;
+  cursor: pointer;
+}
+
+.index2-terminal .index2-more button:hover,
+.index2-terminal .index2-more button:focus-visible {
+  border-color: currentColor;
+}
