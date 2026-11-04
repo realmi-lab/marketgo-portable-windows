@@ -120,6 +120,10 @@
   color: var(--muted-foreground);
   font-size: var(--type-caption);
 }
+.np-source-bar .np-source-origin {
+  margin-left: 0;
+  flex: 0 0 100%;
+}
 .np-source-error {
   color: var(--primary);
 }

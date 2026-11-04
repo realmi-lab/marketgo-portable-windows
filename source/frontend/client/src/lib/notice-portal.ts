@@ -74,10 +74,7 @@ export function noticeHourlySummary(
 
 export function noticeLiveVolume(
   row:
-    | Pick<
-        MarketShareAsset,
-        "domestic_trade_count" | "domestic_base_quantity" | "domestic_volume_krw"
-      >
+    | { domestic_trade_count: number; domestic_base_quantity: number | null; domestic_volume_krw: number | null }
     | undefined,
   complete: boolean
 ) {

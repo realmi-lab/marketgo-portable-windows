@@ -112,7 +112,7 @@ class Engine:
         self.tickers = {v: Snapshot() for v in VENUES}
         self.feeds: dict[str, Feed] = {}
         self.expected = {v: set() for v in VENUES}
-        self.buckets: dict[str, dict[int, dict[str, tuple[Decimal, int]]]] = {v: {} for v in VENUES}
+        self.buckets: dict[str, dict[int, dict[str, tuple[Decimal, int, Decimal | None]]]] = {v: {} for v in VENUES}
         self.seen: OrderedDict[tuple[str, str, str], float] = OrderedDict()
         self.oldest = int(clock())
         self.records = 0
@@ -170,6 +170,8 @@ class Engine:
                 return False
             if not trade.amount.is_finite() or trade.amount <= 0 or trade.amount > Decimal('1e30'):
                 return False
+            if trade.quantity is not None and (not trade.quantity.is_finite() or trade.quantity <= 0 or trade.quantity > Decimal('1e30')):
+                return False
             identity = (venue, trade.base, trade.identity)
             if identity in self.seen:
                 return False
@@ -179,10 +181,11 @@ class Engine:
                 # Never reinsert records that have already expired from retention.
                 return False
             bucket = self.buckets[venue].setdefault(second, {})
-            previous, count = bucket.get(trade.base, (ZERO, 0))
+            previous, count, quantity = bucket.get(trade.base, (ZERO, 0, ZERO))
             if trade.base not in bucket:
                 self.records += 1
-            bucket[trade.base] = (previous + trade.amount, count + 1)
+            bucket[trade.base] = (previous + trade.amount, count + 1,
+                                 quantity + trade.quantity if quantity is not None and trade.quantity is not None else None)
             feed.state, feed.at, feed.error = 'LIVE', now, ''
             self.version += 1
             self._prune(now)
@@ -222,17 +225,19 @@ class Engine:
             coverage = min(coverage, covered)
             assets = {}
             for second in range(max(end - seconds + 1, self.oldest), end + 1):
-                for base, (amount, count) in self.buckets[venue].get(second, {}).items():
-                    old, old_count = assets.get(base, (ZERO, 0))
-                    assets[base] = (old + amount, old_count + count)
-            amount = sum((a for a, _ in assets.values()), ZERO)
-            count = sum(c for _, c in assets.values())
+                for base, (amount, count, quantity) in self.buckets[venue].get(second, {}).items():
+                    old, old_count, old_quantity = assets.get(base, (ZERO, 0, ZERO))
+                    assets[base] = (old + amount, old_count + count,
+                                    old_quantity + quantity if old_quantity is not None and quantity is not None else None)
+            amount = sum((a for a, _, _ in assets.values()), ZERO)
+            count = sum(c for _, c, _ in assets.values())
             reported = amount if count or not partial else None
             if reported is not None:
                 total += reported
                 trade_total += count
-            for base, (value, _) in assets.items():
-                rows.append(row(venue, base, value, partial, 'OBSERVED_KRW_TRADES'))
+            for base, (value, trades, quantity) in assets.items():
+                rows.append(dict(row(venue, base, value, partial, 'OBSERVED_KRW_TRADES'),
+                                 trade_count=trades, base_volume=quantity))
             venues.append(dict(exchange=venue, volume_krw=reported, trade_count=count if reported is not None else None,
                                share_pct=None, trade_count_share_pct=None, partial=partial))
         for venue in venues:
@@ -407,3 +412,21 @@ class Engine:
                            exclusive_on_bithumb=venues == {'bithumb'},
                            shared_bithumb_upbit={'bithumb', 'upbit'} <= venues) for base, venues in listings.items()]
             return dict(contract_version='INDEX_FILTERS_V1', assets=assets, notice_assets=[])
+
+    def notice_portal(self, rolling: dict) -> dict:
+        with self.lock:
+            end = int(self.clock())
+            live = self._live(600, end - 1)
+            assets = {}
+            for item in live['rows']:
+                value = assets.setdefault(item['base'], dict(asset=item['base'], domestic_volume_krw=ZERO,
+                                          domestic_trade_count=0, domestic_base_quantity=ZERO))
+                value['domestic_volume_krw'] += item['volume_krw']
+                value['domestic_trade_count'] += item['trade_count']
+                quantity = item['base_volume']
+                value['domestic_base_quantity'] = (value['domestic_base_quantity'] + quantity
+                    if value['domestic_base_quantity'] is not None and quantity is not None else None)
+            return dict(assets=list(assets.values()), rolling_24h=rolling, data_source='PORTABLE_OBSERVED_KRW_TRADES',
+                        context=dict(selected_window_complete=live['complete'], selected_window_coverage_sec=live['coverage'],
+                                     selected_window_required_sec=600, current_interval_start=end - 600,
+                                     current_interval_end=end))

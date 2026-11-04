@@ -624,15 +624,13 @@ export async function getMarketRegistryHistory(
 
 /** The fields of the 10-minute KRW analysis the notice portal reads. */
 export interface NoticePortalData {
-  assets: Array<
-    Pick<
-      MarketShareAsset,
-      | "asset"
-      | "domestic_volume_krw"
-      | "domestic_trade_count"
-      | "domestic_base_quantity"
-    >
-  >;
+  data_source?: "PORTABLE_OBSERVED_KRW_TRADES";
+  assets: Array<{
+    asset: string;
+    domestic_volume_krw: number | null;
+    domestic_trade_count: number;
+    domestic_base_quantity: number | null;
+  }>;
   context: Pick<
     MarketShareAnalysis["context"],
     | "selected_window_complete"
@@ -673,6 +671,7 @@ export async function getNoticePortal(
   )
     throw new Error("Notice portal response incomplete");
   return {
+    data_source: value.data_source,
     assets: value.assets,
     context: value.context,
     rolling_24h: value.rolling_24h,

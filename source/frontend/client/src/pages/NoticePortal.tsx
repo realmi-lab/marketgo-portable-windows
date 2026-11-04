@@ -51,6 +51,7 @@ const money = (value: number | null | undefined) =>
   value == null || !Number.isFinite(value) ? "—" : formatKRW(value);
 const time = (value: number) => formatMarketTimeMS(value, "date-time");
 const PAGE_SIZE = 20;
+const PORTABLE = import.meta.env.VITE_PORTABLE_PYTHON === "true";
 
 function NoticeCard({
   notice,
@@ -214,18 +215,21 @@ export default function NoticePortal() {
   useEffect(() => {
     document.title = "공지 타임라인 · MarketGO";
   }, []);
+  const hourlyDay = PORTABLE
+    ? analysis ? currentKSTDay(analysis.context.current_interval_end * 1000) : null
+    : currentKSTDay();
   useEffect(() => {
-    if (!asset) return;
+    if (!asset || !hourlyDay) return;
     const controller = new AbortController();
     let active = true;
     const deadline = setTimeout(() => controller.abort(), 12000);
     setHourLoading(true);
     setHourError("");
-    getIndexDay(currentKSTDay(), controller.signal, {
+    getIndexDay(hourlyDay, controller.signal, {
       assets: asset,
       quote: "all",
       venue: "all",
-    })
+    }, "hourly_rolling")
       .then(value => {
         if (active) setHourly({ asset, data: value });
       })
@@ -241,7 +245,7 @@ export default function NoticePortal() {
       clearTimeout(deadline);
       controller.abort();
     };
-  }, [asset, hourRetry]);
+  }, [asset, hourRetry, hourlyDay]);
   const selectAsset = (next: string) => {
     setAsset(next);
     // The desktop panel stays in view (sticky); scroll only when it is not.
@@ -275,7 +279,7 @@ export default function NoticePortal() {
           </span>
         </a>
         <div className="np-header-actions">
-          <a href="https://share.realmi.net/#index">
+          <a href={PORTABLE ? "/" : "https://share.realmi.net/#index"}>
             시장 인덱스 <ExternalLink size={14} />
           </a>
           <button
@@ -291,6 +295,7 @@ export default function NoticePortal() {
       </header>
       <main>
         <div className="np-source-bar">
+          {PORTABLE && <small className="np-source-origin">공지·일정: 운영 서버 · 거래량: 이 PC</small>}
           <span>
             최근 30일{" "}
             <strong>
@@ -497,7 +502,7 @@ export default function NoticePortal() {
                 </div>
               </div>
               <p className="np-caption">
-                국내 거래소에서 직접 수집한 체결 기준입니다.
+                {PORTABLE ? "이 PC에서 직접 수신한 국내 거래소 체결 기준입니다." : "국내 거래소에서 직접 수집한 체결 기준입니다."}
                 {live &&
                   ` 관측 체결 ${live.domestic_trade_count.toLocaleString("ko-KR")}건.`}
               </p>
@@ -541,8 +546,7 @@ export default function NoticePortal() {
                     " 15초마다 갱신합니다."}
                 </p>
                 <p className="np-caption">
-                  원화·BTC·USDT 마켓의 원화 환산 금액입니다. 거래 수량과는
-                  다릅니다.
+                  {PORTABLE ? "이 PC에 저장된 원화 마켓 시간봉의 거래금액입니다. 거래 수량과는 다릅니다." : "원화·BTC·USDT 마켓의 원화 환산 금액입니다. 거래 수량과는 다릅니다."}
                 </p>
                 {current && (
                   <p className="np-caption">

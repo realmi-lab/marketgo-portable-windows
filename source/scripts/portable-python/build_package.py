@@ -62,7 +62,7 @@ def build(platform, web, dependencies):
         for wheel in dependencies['wheels']:
             extract(fetch(wheel), bundle / 'vendor')
         (bundle / 'app').mkdir()
-        for name in ('adapters.py', 'engine.py', 'collector.py', 'server.py', 'market_clock.py', 'hourly.py'):
+        for name in ('adapters.py', 'engine.py', 'collector.py', 'server.py', 'market_clock.py', 'hourly.py', 'notices.py'):
             shutil.copy2(SOURCE / name, bundle / 'app' / name)
         shutil.copy2(SOURCE / 'dependencies.json', bundle / 'DEPENDENCIES.json')
         if platform == 'windows':

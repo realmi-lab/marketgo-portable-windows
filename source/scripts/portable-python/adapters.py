@@ -140,6 +140,7 @@ class Trade:
     identity: str
     at: float
     amount: Decimal
+    quantity: Decimal | None = None
 
 
 def trades(venue: str, payload: dict) -> list[Trade]:
@@ -169,7 +170,8 @@ def trades(venue: str, payload: dict) -> list[Trade]:
     for base, identity, at, price, quantity in rows:
         if identity is None or str(identity) == '':
             raise ValueError('Trade has no replay identity')
-        amount = number(price) * number(quantity)
+        quantity = number(quantity)
+        amount = number(price) * quantity
         if amount > 0:
-            out.append(Trade(base.upper(), str(identity), timestamp(at), amount))
+            out.append(Trade(base.upper(), str(identity), timestamp(at), amount, quantity))
     return out

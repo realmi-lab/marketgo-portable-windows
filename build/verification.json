@@ -1,9 +1,9 @@
 {
   "archive": "MarketGO-Portable.zip",
-  "sha256": "9d1563e02d0b326bea9654f037a5693fe91a2e1425804899eee3b970ad59d645",
+  "sha256": "bcf1989cfe53da080631c9dd4526e44e1ef1efc435088240f6de75f028ab2a2b",
   "sources": {
-    "Windows": "8e0db3c9a9551557411a94f1acf1b637856d9f2a95174c2f53b0ab27bf2d3d05",
-    "Mac-AppleSilicon": "15f1e55e93666c27de229d422b3d04f663d8eb9f7f2975f33ca9017631409f38"
+    "Windows": "774fd7dfc2b76945a95b51f78fe5fcb212608c19f90bbf03a1234e1a00d26d5a",
+    "Mac-AppleSilicon": "cb0f6e57ac7f53c8ab9bf8f85ebe6f5d1f79c8ac47fb67be305cc659d1bd0ddf"
   },
-  "verified_runtime_files": 2146
+  "verified_runtime_files": 2148
 }

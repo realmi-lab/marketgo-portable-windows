@@ -36,7 +36,8 @@ Mac 종류는 Apple 메뉴 → **이 Mac에 관하여**에서 확인합니다.
 - 시간봉은 각 플랫폼 폴더의 `data/index-hours.sqlite3`에 남습니다. 업데이트할 때 프로그램을 완전히 종료한 뒤 `data` 폴더 전체를 새 폴더로 옮기세요.
 - 실시간 체결 이력은 종료하면 사라집니다. 다시 켜면 24시간 티커를 새로 받고, 실시간 체결은 실행 시점부터 다시 쌓입니다.
 - 종료·잠자기·연결 중단 중의 체결을 복구하지 않습니다. 미수신 값을 실제 0으로 채우지 않습니다.
-- 공지 수집과 AI 작업은 꺼져 있습니다.
+- 상단 **공지 타임라인**에서 공지 일정·본문·관련 코인 거래량을 봅니다. 공지·분석된 일정은 기존 운영 공지 서버에서 읽고, 거래량은 이 PC가 수신한 최근 10분 체결과 저장한 시간봉으로 표시합니다.
+- 공지 화면의 **시장 인덱스**를 누르면 포터블 대시보드로 돌아옵니다. LLM 메뉴·로컬 AI 작업은 실행하지 않습니다.
 - 과거 결측과 실패 요청을 자동 복구하지 않습니다. 디지털엑스·고팍스의 시간봉 거래금액은 미제공으로 남깁니다.
 
 ## 플랫폼별 구성과 확인 범위
@@ -67,6 +68,7 @@ build/MarketGO-Portable.zip     Windows + Apple Silicon Mac 통합 포터블
 source/scripts/portable-python/ Windows·Mac 공통 수집·계산·HTTP·시간봉 저장
 source/frontend/               공통 화면 원본과 잠금 파일
 source/docs/hourly-index.md    자동 시간봉 수집·보관 계약
+source/docs/portable-notices.md 공지 타임라인·거래량 연결 계약
 source/scripts/                실행기와 빌드 스크립트
 source/tests/portable_python/   수집·계산·시각 회귀 검사
 ```

@@ -20,9 +20,10 @@ sys.path.insert(0, str(ROOT / 'vendor'))
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 
 from engine import Engine  # noqa: E402
-from collector import Collector, tls_context  # noqa: E402
+from collector import Collector, tls_context, get_json  # noqa: E402
 from market_clock import MarketClock  # noqa: E402
 from hourly import HourlyArchive  # noqa: E402
+from notices import NoticeFeed, NoticeUnavailable  # noqa: E402
 
 LOG = logging.getLogger('marketgo')
 
@@ -37,8 +38,9 @@ class Server(ThreadingHTTPServer):
     daemon_threads = True
     allow_reuse_address = False
 
-    def __init__(self, address, engine, web):
+    def __init__(self, address, engine, web, notices=None):
         self.engine, self.web = engine, web
+        self.notices = notices
         self.instance_id = uuid.uuid4().hex
         super().__init__(address, Handler)
 
@@ -80,7 +82,7 @@ class Handler(SimpleHTTPRequestHandler):
         engine = self.server.engine
         try:
             if parsed.path == '/api/portable/status':
-                self.send_json({'engine': 'python', 'version': '3.2.0', 'notices': False,
+                self.send_json({'engine': 'python', 'version': '3.3.0', 'notices': bool(self.server.notices),
                                 'instance_id': self.server.instance_id,
                                 'hourly': engine.archive.info() if engine.archive else None,
                                 'clock': engine.clock_info() if engine.clock_info else None})
@@ -96,9 +98,15 @@ class Handler(SimpleHTTPRequestHandler):
                 self.send_json(engine.realtime_index(query))
             elif parsed.path == '/api/market-share/index-filters':
                 self.send_json(engine.filters())
+            elif parsed.path == '/api/market-share/notices' and self.server.notices:
+                self.send_json(self.server.notices.archive(query))
+            elif parsed.path == '/api/market-share/notice-portal' and self.server.notices:
+                self.send_json(engine.notice_portal(self.server.notices.timeline()))
             elif parsed.path.startswith('/api/'):
                 self.send_json({'detail': 'Unsupported API'}, 404)
             else:
+                if parsed.path in ('/notices', '/notices/'):
+                    self.path = '/index.html'
                 # SimpleHTTPRequestHandler normalizes traversal and serves only
                 # the bundled web tree; the package contains no symlink assets.
                 super().do_GET()
@@ -106,6 +114,8 @@ class Handler(SimpleHTTPRequestHandler):
             pass
         except ValueError as exc:
             self.send_json({'detail': str(exc)}, 400)
+        except NoticeUnavailable as exc:
+            self.send_json({'detail': str(exc)}, exc.status)
         except Exception:
             LOG.exception('HTTP request failed')
             self.send_json({'detail': 'Local server error; see logs/runtime.log'}, 503)
@@ -141,10 +151,11 @@ def main():
         archive = HourlyArchive(ROOT / 'data' / 'index-hours.sqlite3')
         engine = Engine(clock=clock.time, clock_info=clock.info, archive=archive, clock_sync=lambda: clock.synchronize(context))
         server.engine = engine
+        server.notices = NoticeFeed(lambda url: get_json(url, context))
         collector = Collector(engine, context)
         collector.start()
         url = f'http://127.0.0.1:{args.port}/'
-        LOG.info('MarketGO Python %s; %s; hourly index ON; historical backfill OFF; notice collection OFF', sys.version.split()[0], url)
+        LOG.info('MarketGO Python %s; %s; hourly index ON; historical backfill OFF; public notice feed ON; local LLM OFF', sys.version.split()[0], url)
         if not args.no_browser:
             timer = threading.Timer(0.7, lambda: webbrowser.open(url))
             timer.daemon = True
